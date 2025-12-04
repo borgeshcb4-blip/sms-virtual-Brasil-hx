@@ -15,8 +15,7 @@ import {
   Globe,
   Smartphone, 
   CheckCircle2,
-  AlertCircle,
-  Camera
+  AlertCircle
 } from 'lucide-react';
 import { initTelegramApp, getTelegramUser } from './services/telegramService';
 import { TelegramUser, Service, Transaction } from './types';
@@ -321,29 +320,9 @@ const OrdersView = () => (
 );
 
 const ProfileView = ({ user }: { user: TelegramUser | null }) => {
-    const [photoUrl, setPhotoUrl] = useState<string | null>(null);
-
-    const handleRequestPhoto = () => {
-        // Feature check for the specific requested method
-        if (window.Telegram?.WebApp?.requestUserProfilePhoto) {
-            window.Telegram.WebApp.requestUserProfilePhoto((result) => {
-                if (typeof result === 'object' && result.photo_url) {
-                    setPhotoUrl(result.photo_url);
-                } else if (typeof result === 'string') {
-                    // Handle case where it returns string directly
-                    setPhotoUrl(result);
-                }
-            }, 640);
-        } else {
-            console.log("requestUserProfilePhoto is not available in this client.");
-            // Dev fallback for testing UI
-            if (process.env.NODE_ENV === 'development') {
-                setPhotoUrl("https://i.pravatar.cc/600");
-            } else {
-                alert("Esta funcionalidade requer uma versão mais recente do Telegram ou autorização específica.");
-            }
-        }
-    };
+    // Se o user.photo_url estiver disponível, o Telegram já forneceu a imagem pública.
+    // Se não estiver, exibimos o boneco genérico.
+    const photoUrl = user?.photo_url;
 
     return (
         <div className="pb-28 space-y-4">
@@ -357,19 +336,10 @@ const ProfileView = ({ user }: { user: TelegramUser | null }) => {
                             className="w-16 h-16 rounded-full object-cover shadow-lg shadow-blue-200 border-2 border-white ring-2 ring-blue-50"
                         />
                     ) : (
-                        <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-blue-600 to-blue-400 flex items-center justify-center text-white text-2xl font-bold shadow-lg shadow-blue-200 border-2 border-white ring-2 ring-blue-50">
-                            {user?.first_name ? user.first_name[0].toUpperCase() : <User size={28} />}
+                        // Boneco Genérico
+                        <div className="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 text-2xl font-bold shadow-lg shadow-slate-100 border-2 border-white ring-2 ring-slate-50">
+                            <User size={32} />
                         </div>
-                    )}
-                    
-                    {!photoUrl && (
-                        <button 
-                            onClick={handleRequestPhoto}
-                            className="absolute -bottom-1 -right-1 bg-white text-blue-600 p-1.5 rounded-full shadow-md border border-slate-100 hover:bg-blue-50 transition-colors"
-                            title="Carregar foto"
-                        >
-                            <Camera size={14} />
-                        </button>
                     )}
                 </div>
                 

@@ -52,8 +52,6 @@ export interface TelegramWebApp {
         offClick: (callback: () => void) => void;
     };
     setHeaderColor?: (color: string) => void;
-    // Method requested by user for explicit photo permission
-    requestUserProfilePhoto?: (callback: (result: { photo_url: string } | string) => void, size?: number) => void;
 }
 
 declare global {
