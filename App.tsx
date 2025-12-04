@@ -15,7 +15,9 @@ import {
   Globe,
   Smartphone, 
   CheckCircle2,
-  AlertCircle
+  AlertCircle,
+  ArrowUpRight,
+  Bell
 } from 'lucide-react';
 import { initTelegramApp, getTelegramUser } from './services/telegramService';
 import { TelegramUser, Service, Transaction } from './types';
@@ -68,85 +70,136 @@ const BottomNav = ({ activeTab, setTab }: { activeTab: string, setTab: (t: strin
   );
 };
 
-// 2. Header
-const Header = () => (
-  <header className="bg-blue-600 text-white pt-4 pb-4 sticky top-0 z-40 shadow-md">
-    <div className="flex justify-between items-center max-w-md mx-auto px-4">
-      <div className="flex items-center space-x-2.5">
-        <div className="bg-white/20 p-1.5 rounded-lg backdrop-blur-sm">
-          <MessageSquare className="text-white" size={20} fill="currentColor" fillOpacity={0.2} />
-        </div>
-        <div>
-           <h1 className="text-lg font-bold tracking-tight leading-none">ATIVA SMS</h1>
-           <span className="text-[10px] text-blue-100 font-medium opacity-80">Virtual Numbers</span>
-        </div>
-      </div>
-      <div className="bg-white/10 px-3 py-1.5 rounded-xl text-sm font-bold border border-white/20 flex items-center shadow-sm backdrop-blur-sm">
-        R$ 0,00
-      </div>
-    </div>
-  </header>
-);
+// 2. Views
 
-// 3. Views
+const HomeView = ({ user, setTab }: { user: TelegramUser | null, setTab: (t: string) => void }) => {
+  const photoUrl = user?.photo_url;
 
-const HomeView = () => {
   return (
-    <div className="space-y-4 pb-28">
-      {/* Hero Card */}
-      <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
-        <h2 className="font-bold text-slate-800 text-lg">Obtenha um número virtual</h2>
-        <p className="text-slate-500 text-sm mt-1 leading-relaxed">
-          Escolha seu país, serviço e quantidade. Receba SMS em tempo real.
-        </p>
+    <div className="space-y-6 pb-28 pt-4">
+      
+      {/* HEADER: Foto Esquerda + Saudação + Notificação */}
+      <div className="flex items-center justify-between px-1">
+        <div className="flex items-center gap-3">
+             <button onClick={() => setTab('profile')} className="relative active:scale-95 transition-transform">
+                {photoUrl ? (
+                    <img 
+                    src={photoUrl} 
+                    alt="Profile" 
+                    className="w-10 h-10 rounded-full object-cover shadow-sm ring-2 ring-white"
+                    />
+                ) : (
+                    <div className="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center text-slate-500 shadow-sm ring-2 ring-white">
+                        <User size={20} />
+                    </div>
+                )}
+            </button>
+            <div className="flex flex-col">
+                <span className="text-slate-400 text-[10px] font-bold uppercase tracking-wider leading-none mb-0.5">Olá,</span>
+                <span className="text-slate-800 font-bold text-lg leading-none">{user?.first_name || 'Visitante'}</span>
+            </div>
+        </div>
+        <button className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-slate-400 shadow-sm border border-slate-100 active:bg-slate-50">
+            <Bell size={20} />
+        </button>
       </div>
 
-      {/* Selection Card */}
-      <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 space-y-4">
-        
+      {/* BANK STYLE BALANCE CARD (FULL WIDTH) */}
+      <div className="bg-gradient-to-br from-blue-600 to-blue-700 rounded-[2rem] p-6 text-white shadow-xl shadow-blue-200/50 relative overflow-hidden group">
+             {/* Decorative elements */}
+             <div className="absolute -right-12 -top-12 bg-white/10 w-48 h-48 rounded-full blur-3xl group-hover:bg-white/15 transition-colors"></div>
+             <div className="absolute -left-10 -bottom-10 bg-black/10 w-32 h-32 rounded-full blur-2xl"></div>
+             
+             <div className="relative z-10 flex flex-col items-start gap-1">
+                <div className="flex items-center justify-between w-full mb-2">
+                    <p className="text-blue-100 text-[11px] font-bold uppercase tracking-widest flex items-center gap-1.5">
+                        <Wallet size={14} className="text-blue-200"/> Saldo Disponível
+                    </p>
+                </div>
+                
+                <h2 className="text-[2.5rem] leading-none font-extrabold tracking-tight mb-6">
+                    R$ 0<span className="text-2xl text-blue-200/80 font-bold">,00</span>
+                </h2>
+                
+                <div className="w-full">
+                    <button 
+                        onClick={() => setTab('balance')}
+                        className="w-full bg-white/20 hover:bg-white/25 active:bg-white/30 backdrop-blur-md border border-white/10 text-white py-3.5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all shadow-lg shadow-blue-900/10"
+                    >
+                        <Plus size={18} strokeWidth={3} />
+                        Adicionar Dinheiro
+                    </button>
+                </div>
+             </div>
+      </div>
+
+      {/* STATS GRID */}
+      <div className="grid grid-cols-2 gap-4">
+         {/* Active Numbers */}
+         <div className="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 flex flex-col items-center justify-center text-center gap-1 active:scale-[0.98] transition-transform cursor-default">
+             <div className="w-10 h-10 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center mb-1">
+                 <Smartphone size={22} strokeWidth={2.5} />
+             </div>
+             <span className="text-2xl font-extrabold text-slate-800 block">0</span>
+             <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">Números Ativos</span>
+         </div>
+
+         {/* SMS Received */}
+         <div className="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 flex flex-col items-center justify-center text-center gap-1 active:scale-[0.98] transition-transform cursor-default">
+             <div className="w-10 h-10 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center mb-1">
+                 <MessageSquare size={22} strokeWidth={2.5} />
+             </div>
+             <span className="text-2xl font-extrabold text-slate-800 block">0</span>
+             <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">SMS Hoje</span>
+         </div>
+      </div>
+
+      {/* SERVICE SELECTOR SECTION */}
+      <div className="bg-white p-5 rounded-3xl shadow-sm border border-slate-100 space-y-5">
+        <h3 className="font-bold text-slate-800 text-sm flex items-center gap-2">
+            <ShoppingCart size={16} className="text-blue-500"/>
+            Nova Ativação
+        </h3>
+
         {/* Country */}
         <div className="space-y-2">
-            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">País</label>
-            <button className="w-full flex items-center justify-between p-3.5 border border-slate-200 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors">
-            <div className="flex items-center space-x-3">
-                <span className="text-2xl shadow-sm rounded-sm overflow-hidden">🇧🇷</span>
-                <span className="font-bold text-slate-700">BRASIL (BR)</span>
-            </div>
-            <ChevronRight size={18} className="text-slate-400" />
+            <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block ml-1">País</label>
+            <button className="w-full flex items-center justify-between p-3.5 border border-slate-200 rounded-xl bg-slate-50 hover:bg-slate-100 active:bg-slate-200 transition-colors group">
+                <div className="flex items-center space-x-3">
+                    <span className="text-2xl drop-shadow-sm leading-none grayscale group-hover:grayscale-0 transition-all">🇧🇷</span>
+                    <span className="font-bold text-slate-700 text-sm">BRASIL (BR)</span>
+                </div>
+                <ChevronRight size={18} className="text-slate-400" />
             </button>
         </div>
 
         {/* Service */}
         <div className="space-y-2">
-            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">Serviço</label>
+            <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block ml-1">Serviço</label>
             
-            <div className="border-2 border-blue-100 rounded-xl overflow-hidden p-1">
-                <div className="bg-blue-50/50 rounded-lg p-2 mb-2">
-                     <p className="text-center text-blue-800 font-bold text-sm">Selecione um serviço</p>
-                </div>
-                
+            <div className="border border-slate-200 rounded-xl overflow-hidden p-1 bg-white">
                 {/* Search Input */}
-                <div className="relative mb-2 px-1">
-                    <Search className="absolute left-3 top-2.5 text-slate-400" size={16} />
+                <div className="relative mb-2">
+                    <Search className="absolute left-3 top-3 text-slate-400" size={16} />
                     <input 
                         type="text" 
-                        placeholder="Digite para buscar serviço..." 
-                        className="w-full pl-9 pr-4 py-2 rounded-lg border border-slate-200 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all text-sm bg-white"
+                        placeholder="Buscar serviço..." 
+                        className="w-full pl-9 pr-4 py-2.5 rounded-lg border border-transparent focus:bg-white bg-slate-50 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all text-sm placeholder:text-slate-400 font-medium"
                     />
                 </div>
 
                 {/* Services List Preview */}
                 <div className="space-y-1 max-h-[220px] overflow-y-auto pr-1 custom-scrollbar">
                     {SERVICES.slice(0, 5).map(service => (
-                        <div key={service.id} className="flex items-center justify-between p-2.5 hover:bg-blue-50 rounded-lg cursor-pointer transition-colors group border border-transparent hover:border-blue-100">
+                        <div key={service.id} className="flex items-center justify-between p-3 hover:bg-slate-50 rounded-xl cursor-pointer transition-colors group border border-transparent hover:border-slate-100">
                             <div className="flex items-center space-x-3">
-                                <div className={`w-7 h-7 rounded-full ${service.icon} flex items-center justify-center text-white text-[10px] font-bold shadow-sm`}>
+                                <div className={`w-9 h-9 rounded-full ${service.icon} flex items-center justify-center text-white text-[11px] font-bold shadow-sm ring-1 ring-black/5`}>
                                     {service.name[0]}
                                 </div>
-                                <span className="font-medium text-slate-700 text-sm group-hover:text-blue-700">{service.name}</span>
-                                {service.isHot && <span className="text-[9px] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded-full font-bold shadow-sm">HOT</span>}
+                                <span className="font-bold text-slate-700 text-sm group-hover:text-slate-900">{service.name}</span>
+                                {service.isHot && <span className="text-[9px] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded-md font-bold">HOT</span>}
                             </div>
-                            <span className="font-bold text-slate-700 text-sm">R$ {service.price.toFixed(2)}</span>
+                            <span className="font-extrabold text-slate-700 text-sm bg-slate-100 px-2 py-1 rounded-lg group-hover:bg-white group-hover:shadow-sm transition-all">R$ {service.price.toFixed(2)}</span>
                         </div>
                     ))}
                 </div>
@@ -154,42 +207,20 @@ const HomeView = () => {
         </div>
       </div>
 
-      {/* Active Activations - Empty State */}
-      <div className="bg-gradient-to-br from-blue-50 to-indigo-50 p-6 rounded-2xl border border-blue-100 flex flex-col items-center justify-center text-center">
-        <div className="bg-white p-3 rounded-full shadow-sm mb-3">
-             <RefreshCw className="text-blue-500 animate-[spin_10s_linear_infinite]" size={24} />
-        </div>
-        <h3 className="font-bold text-blue-900 text-sm mb-1">Nenhuma ativação ativa</h3>
-        <p className="text-blue-600/70 text-xs max-w-[200px]">
-            As ativações aparecem aqui por 20 minutos após a criação.
-        </p>
-      </div>
-      
-      {/* Recent SMS */}
-      <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
-        <div className="flex items-center space-x-2 mb-4">
-            <Smartphone size={18} className="text-blue-600" />
-            <h3 className="font-bold text-slate-800 text-sm">Últimos SMS recebidos (Hoje)</h3>
-        </div>
-        <div className="bg-slate-50 p-8 rounded-xl border-2 border-dashed border-slate-200 flex flex-col items-center justify-center text-center group hover:border-blue-200 transition-colors">
-             <MessageSquare size={32} className="text-slate-300 mb-2 group-hover:text-blue-300 transition-colors" />
-             <p className="font-bold text-slate-600 text-sm mb-1">Nenhum SMS recebido</p>
-             <p className="text-xs text-slate-400">Suas mensagens aparecerão aqui automaticamente</p>
-        </div>
-      </div>
     </div>
   );
 };
 
 const ServicesView = () => (
-    <div className="pb-28 space-y-4">
-        <div className="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 sticky top-[76px] z-30">
+    <div className="pb-28 space-y-4 pt-4">
+        <h2 className="text-xl font-bold text-slate-800 px-1">Todos Serviços</h2>
+        <div className="bg-white p-3 rounded-2xl shadow-sm border border-slate-100 sticky top-4 z-30">
              <div className="relative">
                 <Search className="absolute left-3.5 top-3 text-slate-400" size={18} />
                 <input 
                     type="text" 
                     placeholder="Buscar serviço..." 
-                    className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 bg-slate-50 transition-all"
+                    className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 bg-slate-50 transition-all text-sm font-medium"
                 />
             </div>
         </div>
@@ -211,8 +242,8 @@ const ServicesView = () => (
                     </div>
                     <div className="flex flex-col items-end gap-1">
                          <p className="font-bold text-blue-600">R$ {service.price.toFixed(2)}</p>
-                         <button className="bg-blue-600 text-white text-[10px] px-3 py-1 rounded-full font-bold shadow-md shadow-blue-200 active:bg-blue-700">
-                             COMPRAR
+                         <button className="bg-blue-600 text-white text-[10px] px-3 py-1.5 rounded-lg font-bold shadow-md shadow-blue-200 active:bg-blue-700 uppercase tracking-wide">
+                             Comprar
                          </button>
                     </div>
                 </div>
@@ -226,8 +257,9 @@ const BalanceView = () => {
     const presets = [5, 10, 20, 30, 50, 100];
 
     return (
-        <div className="pb-28 space-y-4">
-             <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+        <div className="pb-28 space-y-4 pt-4">
+             <h2 className="text-xl font-bold text-slate-800 px-1">Carteira</h2>
+             <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-100">
                 <h2 className="font-bold text-slate-800 mb-6 text-center text-lg">Quanto você quer recarregar?</h2>
                 
                 <div className="relative mb-6">
@@ -237,7 +269,7 @@ const BalanceView = () => {
                         value={amount > 0 ? amount : ''}
                         onChange={(e) => setAmount(Number(e.target.value))}
                         placeholder="0,00"
-                        className="w-full pl-12 pr-4 py-4 rounded-xl border border-slate-200 text-3xl font-bold text-slate-800 focus:border-blue-500 focus:ring-4 focus:ring-blue-50 outline-none text-center"
+                        className="w-full pl-12 pr-4 py-4 rounded-2xl border border-slate-200 text-3xl font-bold text-slate-800 focus:border-blue-500 focus:ring-4 focus:ring-blue-50 outline-none text-center bg-slate-50 focus:bg-white transition-colors"
                     />
                 </div>
 
@@ -246,9 +278,9 @@ const BalanceView = () => {
                         <button 
                             key={val}
                             onClick={() => setAmount(val)}
-                            className={`py-3 rounded-xl border font-bold text-sm transition-all ${
+                            className={`py-3.5 rounded-xl border font-bold text-sm transition-all active:scale-95 ${
                                 amount === val 
-                                ? 'bg-blue-600 border-blue-600 text-white shadow-md shadow-blue-200' 
+                                ? 'bg-blue-600 border-blue-600 text-white shadow-lg shadow-blue-200' 
                                 : 'bg-white border-slate-200 text-slate-600 hover:border-blue-300 hover:bg-blue-50'
                             }`}
                         >
@@ -268,7 +300,7 @@ const BalanceView = () => {
                     </p>
                 </div>
 
-                <button className="w-full bg-blue-600 text-white py-4 rounded-xl font-bold text-lg shadow-lg shadow-blue-200 active:scale-[0.98] transition-transform flex items-center justify-center gap-2">
+                <button className="w-full bg-blue-600 text-white py-4 rounded-xl font-bold text-lg shadow-xl shadow-blue-200 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
                     <Smartphone size={20} />
                     Gerar Pix Copia e Cola
                 </button>
@@ -278,10 +310,11 @@ const BalanceView = () => {
 }
 
 const OrdersView = () => (
-    <div className="pb-28 space-y-4">
-        <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
+    <div className="pb-28 space-y-4 pt-4">
+        <h2 className="text-xl font-bold text-slate-800 px-1">Meus Pedidos</h2>
+        <div className="bg-white p-5 rounded-[2rem] shadow-sm border border-slate-100">
              <div className="flex items-center justify-between mb-5">
-                 <h2 className="font-bold text-slate-800 text-lg">Histórico</h2>
+                 <h2 className="font-bold text-slate-800 text-sm uppercase tracking-wide">Transações Recentes</h2>
                  <button className="text-blue-600 text-xs font-bold bg-blue-50 px-3 py-1 rounded-full">Filtrar</button>
              </div>
 
@@ -290,7 +323,7 @@ const OrdersView = () => (
                      <div key={tx.id} className="flex justify-between items-center p-3 hover:bg-slate-50 rounded-xl transition-colors border border-transparent hover:border-slate-100">
                          <div className="flex items-center gap-4">
                              <div className={`w-10 h-10 rounded-full flex items-center justify-center shadow-sm ${tx.type === 'deposit' ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'}`}>
-                                 {tx.type === 'deposit' ? <Plus size={18} strokeWidth={3}/> : <Minus size={18} strokeWidth={3}/>}
+                                 {tx.type === 'deposit' ? <ArrowUpRight size={18} strokeWidth={3}/> : <Smartphone size={18} strokeWidth={3}/>}
                              </div>
                              <div>
                                  <p className="font-bold text-sm text-slate-800">{tx.description}</p>
@@ -320,31 +353,30 @@ const OrdersView = () => (
 );
 
 const ProfileView = ({ user }: { user: TelegramUser | null }) => {
-    // Se o user.photo_url estiver disponível, o Telegram já forneceu a imagem pública.
-    // Se não estiver, exibimos o boneco genérico.
     const photoUrl = user?.photo_url;
 
     return (
-        <div className="pb-28 space-y-4">
+        <div className="pb-28 space-y-4 pt-4">
+            <h2 className="text-xl font-bold text-slate-800 px-1">Meu Perfil</h2>
             {/* User Info Card */}
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center space-x-5">
+            <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-100 flex items-center space-x-5">
                 <div className="relative">
                     {photoUrl ? (
                          <img 
                             src={photoUrl} 
                             alt="Profile" 
-                            className="w-16 h-16 rounded-full object-cover shadow-lg shadow-blue-200 border-2 border-white ring-2 ring-blue-50"
+                            className="w-16 h-16 rounded-full object-cover shadow-lg shadow-blue-200 border-4 border-slate-50"
                         />
                     ) : (
                         // Boneco Genérico
-                        <div className="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 text-2xl font-bold shadow-lg shadow-slate-100 border-2 border-white ring-2 ring-slate-50">
+                        <div className="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 text-2xl font-bold shadow-lg shadow-slate-100 border-4 border-white">
                             <User size={32} />
                         </div>
                     )}
                 </div>
                 
                 <div className="flex-1 min-w-0">
-                    <p className="text-xs font-bold text-blue-600 uppercase mb-0.5 tracking-wider">Conta Telegram</p>
+                    <p className="text-[10px] font-bold text-blue-600 uppercase mb-1 tracking-wider bg-blue-50 inline-block px-2 py-0.5 rounded-md">Conta Telegram</p>
                     <h2 className="font-bold text-xl text-slate-800 truncate">
                         {user?.first_name || 'Usuário'} {user?.last_name || ''}
                     </h2>
@@ -355,30 +387,16 @@ const ProfileView = ({ user }: { user: TelegramUser | null }) => {
                 </div>
             </div>
 
-            {/* Stats Card (Optional but looks good) */}
-            <div className="grid grid-cols-2 gap-3">
-                 <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-100">
-                     <p className="text-xs text-slate-400 font-bold uppercase mb-1">Saldo Atual</p>
-                     <p className="text-lg font-bold text-blue-600">R$ 0,00</p>
-                 </div>
-                 <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-100">
-                     <p className="text-xs text-slate-400 font-bold uppercase mb-1">Total Pedidos</p>
-                     <p className="text-lg font-bold text-slate-700">0</p>
-                 </div>
-            </div>
-
             {/* Menu List */}
-            <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+            <div className="bg-white rounded-[2rem] shadow-sm border border-slate-100 overflow-hidden">
                 {[
-                    { icon: Wallet, label: "Adicionar Saldo", desc: "Pix Instantâneo" },
-                    { icon: ClipboardList, label: "Meus Pedidos", desc: "Histórico completo" },
                     { icon: Globe, label: "Idioma", desc: "Português (BR)" },
                     { icon: AlertCircle, label: "Suporte", desc: "Fale conosco" },
                     { icon: LogOut, label: "Sair", color: "text-red-500", desc: "Desconectar conta" }
                 ].map((item, idx) => (
                     <button key={idx} className="w-full flex items-center justify-between p-4 hover:bg-slate-50 transition-colors border-b border-slate-50 last:border-0 group">
                         <div className="flex items-center gap-4">
-                            <div className={`w-10 h-10 rounded-full ${item.color ? 'bg-red-50' : 'bg-slate-50'} flex items-center justify-center group-hover:scale-110 transition-transform`}>
+                            <div className={`w-10 h-10 rounded-xl ${item.color ? 'bg-red-50' : 'bg-slate-50'} flex items-center justify-center group-hover:scale-105 transition-transform`}>
                                 <item.icon size={20} className={item.color || "text-slate-600"} />
                             </div>
                             <div className="text-left">
@@ -392,7 +410,7 @@ const ProfileView = ({ user }: { user: TelegramUser | null }) => {
             </div>
 
             <div className="text-center pt-6">
-                <p className="text-[10px] text-slate-400 font-medium">Ativa SMS v2.0 • Build 2024</p>
+                <p className="text-[10px] text-slate-400 font-medium">Ativa SMS v2.0</p>
             </div>
         </div>
     );
@@ -433,18 +451,17 @@ export default function App() {
 
   const renderContent = () => {
     switch (activeTab) {
-      case 'home': return <HomeView />;
+      case 'home': return <HomeView user={user} setTab={setActiveTab} />;
       case 'services': return <ServicesView />;
       case 'balance': return <BalanceView />;
       case 'orders': return <OrdersView />;
       case 'profile': return <ProfileView user={user} />;
-      default: return <HomeView />;
+      default: return <HomeView user={user} setTab={setActiveTab} />;
     }
   };
 
   return (
     <div className="min-h-screen bg-[#F0F2F5] text-slate-900 font-sans selection:bg-blue-100">
-      <Header />
       <main className="max-w-md mx-auto p-4 animate-fadeIn">
         {renderContent()}
       </main>
