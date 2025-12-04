@@ -349,7 +349,8 @@ const ProfileView = ({ user }: { user: TelegramUser | null }) => {
                         {user?.first_name || 'Usuário'} {user?.last_name || ''}
                     </h2>
                     <p className="text-sm text-slate-500 font-medium flex items-center gap-1">
-                        @{user?.username || 'usuario_anonimo'}
+                        <Smartphone size={14} className="text-slate-400" />
+                        {user?.phone_number ? user.phone_number : 'Número não disponível'}
                     </p>
                 </div>
             </div>

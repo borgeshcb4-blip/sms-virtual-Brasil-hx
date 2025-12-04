@@ -29,7 +29,9 @@ export const getTelegramUser = (): TelegramUser | null => {
             last_name: "Silva",
             username: "João36_",
             language_code: "pt-br",
-            is_premium: true
+            is_premium: true,
+            photo_url: "https://ui-avatars.com/api/?name=Joao+Silva&background=0D8ABC&color=fff",
+            phone_number: "+55 (11) 99999-8888" 
         };
     }
 
