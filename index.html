@@ -22,8 +22,19 @@
         background-color: #f8fafc; /* slate-50 */
         overscroll-behavior: none;
       }
+      /* Simple loader for initial state */
+      .loader-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        color: #2563eb;
+        font-family: sans-serif;
+        font-size: 14px;
+        font-weight: 500;
+      }
     </style>
-  <script type="importmap">
+<script type="importmap">
 {
   "imports": {
     "react/": "https://aistudiocdn.com/react@^19.2.1/",
@@ -35,6 +46,12 @@
 </script>
 </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+        <div class="loader-container">
+            Carregando Ativa SMS...
+        </div>
+    </div>
+    <!-- CRITICAL: This connects the HTML to your React Entry Point -->
+    <script type="module" src="/index.tsx"></script>
   </body>
 </html>
