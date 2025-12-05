@@ -45,7 +45,10 @@ import {
   Send,
   Bot,
   ShieldAlert,
-  Lock
+  Lock,
+  MapPin,
+  Clock,
+  CalendarDays
 } from 'lucide-react';
 import { initTelegramApp, getTelegramUser, cloudStorage } from './services/telegramService';
 import { gerarPix } from './services/hoopayService';
@@ -100,6 +103,66 @@ const SERVICES: ExtendedService[] = [
   { id: '30', name: 'Tinder', price: 3.00, icon: 'bg-[#FE3C72] text-white', category: 'social', stock: 920 },
 ];
 
+// --- SOCIAL PROOF DATA ---
+const BRAZILIAN_NAMES = [
+  "Miguel", "Arthur", "Gael", "Théo", "Heitor", "Ravi", "Davi", "Bernardo", "Gabriel", "Noah",
+  "Pedro", "Lucas", "Mateus", "Gustavo", "Felipe", "João", "Rafael", "Daniel", "Enzo", "Bruno",
+  "Helena", "Alice", "Laura", "Maria", "Sophia", "Manuela", "Maitê", "Liz", "Cecília", "Isabella",
+  "Luísa", "Beatriz", "Mariana", "Ana", "Júlia", "Lara", "Fernanda", "Camila", "Amanda", "Letícia",
+  "Rodrigo", "Carlos", "Diego", "Eduardo", "Marcelo", "Ricardo", "Vanessa", "Patrícia", "Cristina"
+];
+
+const BRAZILIAN_STATES = [
+  "SP", "RJ", "MG", "BA", "RS", "PR", "PE", "CE", "PA", "SC", "MA", "GO", "AM", "ES", "PB", "RN", "MT", "AL", "PI", "DF", "MS", "SE", "RO", "TO", "AC", "AP", "RR"
+];
+
+const TIME_VARIATIONS = [
+    // Live (Apenas 1 chance, raro)
+    { label: "agora", isLive: true },
+    
+    // Minutos Variados
+    { label: "há 2 min", isLive: false },
+    { label: "há 4 min", isLive: false },
+    { label: "há 7 min", isLive: false },
+    { label: "há 9 min", isLive: false },
+    { label: "há 12 min", isLive: false },
+    { label: "há 16 min", isLive: false },
+    { label: "há 23 min", isLive: false },
+    { label: "há 28 min", isLive: false },
+    { label: "há 34 min", isLive: false },
+    { label: "há 41 min", isLive: false },
+    { label: "há 47 min", isLive: false },
+    { label: "há 53 min", isLive: false },
+    { label: "há 59 min", isLive: false },
+
+    // Horas Variadas (Maioria)
+    { label: "há 1 hora", isLive: false },
+    { label: "há 1 hora", isLive: false },
+    { label: "há 2 horas", isLive: false },
+    { label: "há 2 horas", isLive: false },
+    { label: "há 3 horas", isLive: false },
+    { label: "há 4 horas", isLive: false },
+    { label: "há 5 horas", isLive: false },
+    { label: "há 6 horas", isLive: false },
+    { label: "há 7 horas", isLive: false },
+    { label: "há 9 horas", isLive: false },
+    { label: "há 11 horas", isLive: false },
+    { label: "há 14 horas", isLive: false },
+    { label: "há 18 horas", isLive: false },
+    { label: "há 21 horas", isLive: false },
+    { label: "há 23 horas", isLive: false },
+
+    // Dias (Perspectiva de longo prazo)
+    { label: "ontem", isLive: false },
+    { label: "ontem", isLive: false },
+    { label: "ontem", isLive: false },
+    { label: "há 2 dias", isLive: false },
+    { label: "há 2 dias", isLive: false },
+    { label: "há 3 dias", isLive: false },
+    { label: "há 4 dias", isLive: false },
+    { label: "há 5 dias", isLive: false },
+];
+
 // --- SKELETON COMPONENTS (SHIMMER EFFECT) ---
 const ServiceListSkeleton = () => (
     <div className="flex items-center justify-between p-3 rounded-xl mb-1 border border-transparent">
@@ -131,6 +194,92 @@ const ServiceCardSkeleton = () => (
 );
 
 // --- COMPONENTS ---
+
+// Social Proof Widget (Herd Effect)
+const SocialProofWidget = () => {
+    const [visible, setVisible] = useState(false);
+    const [data, setData] = useState<{
+        name: string, 
+        state: string, 
+        service: ExtendedService,
+        timeLabel: string,
+        isLive: boolean
+    } | null>(null);
+
+    useEffect(() => {
+        let timeoutId: ReturnType<typeof setTimeout>;
+        let hideTimeoutId: ReturnType<typeof setTimeout>;
+
+        const scheduleNext = () => {
+            // Intervalo mais aleatório e um pouco mais espaçado (entre 6 e 18 segundos)
+            const interval = Math.floor(Math.random() * (18000 - 6000 + 1) + 6000);
+            
+            timeoutId = setTimeout(() => {
+                // Generate random data
+                const randomName = BRAZILIAN_NAMES[Math.floor(Math.random() * BRAZILIAN_NAMES.length)];
+                const randomState = BRAZILIAN_STATES[Math.floor(Math.random() * BRAZILIAN_STATES.length)];
+                const randomService = SERVICES[Math.floor(Math.random() * SERVICES.length)];
+                
+                // Random Time Label from extended list
+                const timeObj = TIME_VARIATIONS[Math.floor(Math.random() * TIME_VARIATIONS.length)];
+
+                setData({ 
+                    name: randomName, 
+                    state: randomState, 
+                    service: randomService,
+                    timeLabel: timeObj.label,
+                    isLive: timeObj.isLive
+                });
+                setVisible(true);
+
+                // Hide after 5 seconds
+                hideTimeoutId = setTimeout(() => {
+                    setVisible(false);
+                    scheduleNext(); // Schedule next occurrence
+                }, 5000);
+
+            }, interval);
+        };
+
+        // Start loop
+        scheduleNext();
+
+        return () => {
+            clearTimeout(timeoutId);
+            clearTimeout(hideTimeoutId);
+        };
+    }, []);
+
+    if (!data) return null;
+
+    return (
+        <div className={`fixed bottom-24 left-0 right-0 z-40 flex justify-center pointer-events-none transition-all duration-700 transform ${visible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
+            <div className="bg-white/95 backdrop-blur-md px-3.5 py-2.5 rounded-full shadow-xl border border-slate-100 flex items-center gap-3 max-w-[95%] mx-4">
+                 <div className={`w-7 h-7 rounded-full shrink-0 flex items-center justify-center text-[10px] font-bold shadow-sm ${data.service.icon}`}>
+                    {data.service.id === 'specific' ? <MoreHorizontal size={14}/> : data.service.name[0]}
+                 </div>
+                 <div className="flex flex-col">
+                     <p className="text-[11px] text-slate-800 leading-tight">
+                        <span className="font-bold">{data.name}</span> ({data.state}) ativou <span className="font-bold text-blue-600">{data.service.name}</span>
+                     </p>
+                 </div>
+                 <div className="flex items-center gap-1 pl-2 border-l border-slate-200 ml-1">
+                     {data.isLive ? (
+                         <>
+                            <div className="relative flex h-2 w-2">
+                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                                <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                            </div>
+                            <span className="text-[10px] font-bold text-green-600 whitespace-nowrap">{data.timeLabel}</span>
+                         </>
+                     ) : (
+                         <span className="text-[10px] font-medium text-slate-400 whitespace-nowrap">{data.timeLabel}</span>
+                     )}
+                 </div>
+            </div>
+        </div>
+    );
+};
 
 // 1. Navigation Bar
 const BottomNav = ({ activeTab, setTab }: { activeTab: string, setTab: (t: string) => void }) => {
@@ -232,9 +381,10 @@ const HomeView = ({ user, setTab, transactions, currentBalance }: { user: Telegr
 
   return (
     <div className="space-y-6 pb-28 pt-4 relative">
-      
+      <SocialProofWidget />
+
       {/* HEADER */}
-      <div className="flex items-center justify-between px-1">
+      <div className="flex items-center justify-between px-1 relative z-50">
         <div className="flex items-center gap-3">
              <button onClick={() => setTab('profile')} className="relative active:scale-95 transition-transform">
                 {photoUrl ? (
@@ -820,34 +970,36 @@ const SupportChatView = ({ user, onClose }: { user: TelegramUser | null, onClose
     // Initialize Gemini
     useEffect(() => {
         const initChat = async () => {
-            const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
             
-            // Build services list string
-            const servicesList = SERVICES.map(s => `- ${s.name}: R$ ${s.price.toFixed(2)} (${s.category})`).join('\n');
-            
-            const systemInstruction = `
-            Você é o assistente virtual oficial do "Ativa SMS", um serviço de números virtuais para receber SMS.
-            
-            INFORMAÇÕES DO USUÁRIO:
-            Nome: ${user?.first_name || 'Visitante'}
-            
-            SUAS DIRETRIZES:
-            1. SEMPRE chame o usuário pelo nome (primeiro nome).
-            2. Seu objetivo é ajudar com: comprar números, preços, recargas (Pix) e problemas de não receber SMS.
-            3. RESTRICÃO IMPORTANTE: Você NÃO deve responder sobre assuntos que não sejam relacionados ao app (ex: não responda sobre matemática, história, política, programação, conselhos de vida, etc). Se o usuário perguntar algo fora do contexto, diga educadamente que só pode ajudar com o Ativa SMS.
-            4. Tone de voz: Amigável, prestativo e direto. Use emojis ocasionalmente.
-            5. Se o usuário perguntar preços, use a tabela abaixo.
-            6. Sobre pagamentos: Aceitamos apenas PIX. O saldo cai automaticamente após o pagamento.
-            7. Se o SMS não chegar: 
-               - O valor volta para o saldo do app automaticamente após o tempo expirar.
-               - IMPORTANTÍSSIMO: Se o usuário perguntar sobre "sacar" ou "devolver dinheiro para o banco", CONFIRME QUE É POSSÍVEL.
-               - Diga: "Se os números não funcionaram para você, nós garantimos seu direito. Você pode solicitar o estorno (reembolso) do valor pago via PIX diretamente para sua conta bancária. Para isso, basta solicitar a um atendente humano."
-
-            TABELA DE SERVIÇOS E PREÇOS:
-            ${servicesList}
-            `;
-
             try {
+                // Initialize AI directly with process.env.API_KEY
+                const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+                
+                // Build services list string
+                const servicesList = SERVICES.map(s => `- ${s.name}: R$ ${s.price.toFixed(2)} (${s.category})`).join('\n');
+                
+                const systemInstruction = `
+                Você é o assistente virtual oficial do "Ativa SMS", um serviço de números virtuais para receber SMS.
+                
+                INFORMAÇÕES DO USUÁRIO:
+                Nome: ${user?.first_name || 'Visitante'}
+                
+                SUAS DIRETRIZES:
+                1. SEMPRE chame o usuário pelo nome (primeiro nome).
+                2. Seu objetivo é ajudar com: comprar números, preços, recargas (Pix) e problemas de não receber SMS.
+                3. RESTRICÃO IMPORTANTE: Você NÃO deve responder sobre assuntos que não sejam relacionados ao app (ex: não responda sobre matemática, história, política, programação, conselhos de vida, etc). Se o usuário perguntar algo fora do contexto, diga educadamente que só pode ajudar com o Ativa SMS.
+                4. Tone de voz: Amigável, prestativo e direto. Use emojis ocasionalmente.
+                5. Se o usuário perguntar preços, use a tabela abaixo.
+                6. Sobre pagamentos: Aceitamos apenas PIX. O saldo cai automaticamente após o pagamento.
+                7. Se o SMS não chegar: 
+                - O valor volta para o saldo do app automaticamente após o tempo expirar.
+                - IMPORTANTÍSSIMO: Se o usuário perguntar sobre "sacar" ou "devolver dinheiro para o banco", CONFIRME QUE É POSSÍVEL.
+                - Diga: "Se os números não funcionaram para você, nós garantimos seu direito. Você pode solicitar o estorno (reembolso) do valor pago via PIX diretamente para sua conta bancária. Para isso, basta solicitar a um atendente humano."
+
+                TABELA DE SERVIÇOS E PREÇOS:
+                ${servicesList}
+                `;
+
                 chatSessionRef.current = ai.chats.create({
                     model: 'gemini-2.5-flash',
                     config: {
@@ -857,6 +1009,12 @@ const SupportChatView = ({ user, onClose }: { user: TelegramUser | null, onClose
                 });
             } catch (error) {
                 console.error("Erro ao iniciar chat IA", error);
+                setMessages(prev => [...prev, {
+                    id: 'sys-error-1',
+                    text: "⚠️ O sistema de chat está indisponível no momento. Tente novamente mais tarde.",
+                    isUser: false,
+                    timestamp: new Date()
+                }]);
             }
         };
 
@@ -890,21 +1048,30 @@ const SupportChatView = ({ user, onClose }: { user: TelegramUser | null, onClose
                 };
                 setMessages(prev => [...prev, aiMsg]);
             } else {
-                // Fallback if AI init failed
-                setTimeout(() => {
-                    setMessages(prev => [...prev, {
-                        id: (Date.now() + 1).toString(),
-                        text: "Desculpe, estou com problemas de conexão no momento. Tente novamente mais tarde.",
-                        isUser: false,
-                        timestamp: new Date()
-                    }]);
-                }, 1000);
+                // Re-init attempt if session is lost/not ready
+                setMessages(prev => [...prev, {
+                    id: (Date.now() + 1).toString(),
+                    text: "Conectando ao assistente... Tente enviar sua mensagem novamente em alguns segundos.",
+                    isUser: false,
+                    timestamp: new Date()
+                }]);
             }
-        } catch (error) {
+        } catch (error: any) {
             console.error("Erro ao enviar mensagem", error);
+            
+            // Handle Permission Denied (403) specifically and other common errors
+            let errorMessage = "Ocorreu um erro ao processar sua mensagem.";
+            const errStr = error ? error.toString() : "";
+            
+            if (error?.status === 'PERMISSION_DENIED' || errStr.includes('403') || errStr.includes('PERMISSION_DENIED')) {
+                errorMessage = "⚠️ Serviço indisponível: Erro de permissão (API Key inválida ou não habilitada). Contate o suporte técnico.";
+            } else if (errStr.includes('503') || errStr.includes('500')) {
+                errorMessage = "⚠️ O serviço de IA está temporariamente sobrecarregado. Tente novamente em instantes.";
+            }
+
              setMessages(prev => [...prev, {
                 id: (Date.now() + 1).toString(),
-                text: "Ocorreu um erro ao processar sua mensagem.",
+                text: errorMessage,
                 isUser: false,
                 timestamp: new Date()
             }]);
@@ -1125,211 +1292,175 @@ const ProfileView = ({ user, onOpenSupport, onOpenTerms }: { user: TelegramUser 
     };
 
     return (
-        <div className="pb-28 pt-4 space-y-6">
-            <h2 className="text-xl font-bold text-slate-800 px-1">Meu Perfil</h2>
+        <div className="pb-28 pt-4 px-4 space-y-6">
+            <h2 className="text-xl font-bold text-slate-800">Meu Perfil</h2>
             
-            {/* User Card */}
-            <div className="bg-gradient-to-br from-blue-600 to-blue-700 rounded-3xl p-6 text-white shadow-xl shadow-blue-200/50 relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl -mr-10 -mt-10"></div>
-                <div className="absolute bottom-0 left-0 w-24 h-24 bg-black/10 rounded-full blur-xl -ml-5 -mb-5"></div>
-                
-                <div className="relative z-10 flex items-center gap-4">
-                     <div className="relative">
-                        {user?.photo_url ? (
-                            <img src={user.photo_url} alt="Profile" className="w-16 h-16 rounded-full border-4 border-white/20 shadow-sm" />
-                        ) : (
-                            <div className="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center text-white border-4 border-white/20">
-                                <User size={32} />
-                            </div>
-                        )}
-                        {user?.is_premium && (
-                            <div className="absolute -bottom-1 -right-1 bg-white text-blue-600 p-1 rounded-full shadow-sm" title="Premium">
-                                <Star size={12} fill="currentColor" />
-                            </div>
-                        )}
-                     </div>
-                     <div>
-                         <h3 className="text-xl font-bold leading-tight">{user?.first_name} {user?.last_name}</h3>
-                         {user?.username && <p className="text-blue-100 text-sm font-medium">@{user.username}</p>}
-                     </div>
+            {/* Header Card (Blue) */}
+            <div className="bg-blue-600 rounded-3xl p-8 flex justify-center items-center shadow-lg shadow-blue-200">
+                <div className="w-24 h-24 rounded-full bg-white/20 flex items-center justify-center text-white backdrop-blur-sm border-2 border-white/20">
+                     {user?.photo_url ? <img src={user.photo_url} alt="Profile" className="w-full h-full rounded-full object-cover"/> : <User size={40} />}
                 </div>
             </div>
 
-            {/* Info Grid */}
-            <div className="grid grid-cols-2 gap-3">
-                <div className="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm">
-                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">ID Usuário</p>
-                    <p className="font-mono text-slate-700 font-bold">{user?.id || '---'}</p>
-                </div>
-                <div className="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm">
-                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Idioma</p>
-                    <p className="font-bold text-slate-700 flex items-center gap-2">
-                        <Globe size={14} className="text-blue-500" />
-                        {(user?.language_code || 'pt-br').toUpperCase()}
-                    </p>
-                </div>
+            {/* Stats Info Grid */}
+            <div className="grid grid-cols-2 gap-4">
+                 <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">ID USUÁRIO</p>
+                    <p className="font-bold text-slate-800 text-lg tracking-wide">{user?.id ? user.id : '---'}</p>
+                 </div>
+                 <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">IDIOMA</p>
+                    <div className="flex items-center gap-2 font-bold text-slate-800 text-lg">
+                        <Globe size={20} className="text-blue-600"/> PT-BR
+                    </div>
+                 </div>
             </div>
 
             {/* Menu List */}
-            <div className="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden">
-                <button 
-                    onClick={onOpenSupport}
-                    className="w-full flex items-center justify-between p-4 hover:bg-slate-50 transition-colors border-b border-slate-50 group"
-                >
-                    <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center group-hover:bg-blue-100 transition-colors">
-                            <Headphones size={18} />
+            <div className="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden divide-y divide-slate-50">
+                <button onClick={onOpenSupport} className="w-full p-4 flex items-center justify-between hover:bg-slate-50 transition-colors group">
+                    <div className="flex items-center gap-4">
+                        <div className="w-10 h-10 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                            <Headphones size={20} />
                         </div>
-                        <span className="font-bold text-slate-700 text-sm">Suporte Inteligente</span>
+                        <span className="font-bold text-slate-700 text-sm">Suporte</span>
                     </div>
-                    <ChevronRight size={18} className="text-slate-300 group-hover:text-blue-500" />
+                    <ChevronRight size={20} className="text-slate-300"/>
                 </button>
-                <button 
-                    onClick={onOpenTerms}
-                    className="w-full flex items-center justify-between p-4 hover:bg-slate-50 transition-colors border-b border-slate-50 group"
-                >
-                    <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center group-hover:bg-emerald-100 transition-colors">
-                            <ShieldCheck size={18} />
+
+                <button onClick={onOpenTerms} className="w-full p-4 flex items-center justify-between hover:bg-slate-50 transition-colors group">
+                    <div className="flex items-center gap-4">
+                        <div className="w-10 h-10 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white transition-colors">
+                            <ShieldCheck size={20} />
                         </div>
                         <span className="font-bold text-slate-700 text-sm">Termos de Uso</span>
                     </div>
-                    <ChevronRight size={18} className="text-slate-300 group-hover:text-blue-500" />
+                    <ChevronRight size={20} className="text-slate-300"/>
                 </button>
-                <button className="w-full flex items-center justify-between p-4 hover:bg-slate-50 transition-colors group">
-                    <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center group-hover:bg-amber-100 transition-colors">
-                            <Info size={18} />
+
+                <div className="w-full p-4 flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                        <div className="w-10 h-10 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center">
+                            <Info size={20} />
                         </div>
                         <span className="font-bold text-slate-700 text-sm">Versão do App</span>
                     </div>
                     <span className="text-xs font-bold text-slate-400">v1.2.0</span>
-                </button>
+                </div>
             </div>
 
-             <button 
+            {/* Logout */}
+            <button 
                 onClick={handleCloseApp}
-                className="w-full py-4 text-slate-400 font-bold text-sm hover:text-red-500 transition-colors flex items-center justify-center gap-2"
-             >
+                className="w-full py-4 flex items-center justify-center gap-2 text-slate-400 font-bold text-sm hover:text-slate-600 transition-colors"
+            >
                 <LogOut size={18} /> Sair do Mini App
-             </button>
+            </button>
         </div>
     );
 };
 
-const App = () => {
-    const [activeTab, setActiveTab] = useState('home');
-    const [user, setUser] = useState<TelegramUser | null>(null);
-    const [balance, setBalance] = useState(0.00);
-    const [transactions, setTransactions] = useState<Transaction[]>([]);
+// --- APP COMPONENT ---
+
+const App: React.FC = () => {
+  const [activeTab, setActiveTab] = useState('home');
+  const [user, setUser] = useState<TelegramUser | null>(null);
+  const [balance, setBalance] = useState(0.00);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [showSupport, setShowSupport] = useState(false);
+  const [showTerms, setShowTerms] = useState(false);
+
+  useEffect(() => {
+    initTelegramApp();
+    const telegramUser = getTelegramUser();
+    setUser(telegramUser);
     
-    // NEW STATE
-    const [showInsufficientBalanceModal, setShowInsufficientBalanceModal] = useState(false);
+    // Load persisted data
+    const loadData = async () => {
+        const storedBalance = await cloudStorage.getItem('user_balance');
+        if (storedBalance) setBalance(parseFloat(storedBalance));
 
-    useEffect(() => {
-        initTelegramApp();
-        const tgUser = getTelegramUser();
-        setUser(tgUser);
-        setBalance(0.00);
-    }, []);
-
-    const handlePurchase = (service: Service) => {
-        if (balance >= service.price) {
-            setBalance(prev => prev - service.price);
-            const newTx: Transaction = {
-                id: Date.now().toString(),
-                type: 'purchase',
-                amount: service.price,
-                date: new Date().toLocaleDateString('pt-BR'),
-                status: 'completed',
-                description: service.name
-            };
-            setTransactions(prev => [newTx, ...prev]);
-            setActiveTab('mynumbers');
-        } else {
-            // CHANGED HERE
-            setShowInsufficientBalanceModal(true);
-        }
+        const storedTransactions = await cloudStorage.getItem('user_transactions');
+        if (storedTransactions) setTransactions(JSON.parse(storedTransactions));
     };
+    loadData();
 
-    const handleDeposit = (amount: number) => {
-         // Logic to handle deposit visualization (mock)
-         const newTx: Transaction = {
-            id: Date.now().toString(),
-            type: 'deposit',
-            amount: amount,
-            date: new Date().toLocaleDateString('pt-BR'),
-            status: 'pending',
-            description: 'Depósito PIX'
-        };
-        setTransactions(prev => [newTx, ...prev]);
-    }
+  }, []);
 
-    const renderContent = () => {
-        switch(activeTab) {
-            case 'home': return <HomeView user={user} setTab={setActiveTab} transactions={transactions} currentBalance={balance} />;
-            case 'services': return <ServicesView onPurchase={handlePurchase} />;
-            case 'mynumbers': return <MyNumbersView transactions={transactions} />;
-            case 'orders': return <OrdersView transactions={transactions} />;
-            case 'balance': return <BalanceView onDeposit={handleDeposit} currentBalance={balance} />;
-            case 'profile': return <ProfileView user={user} onOpenSupport={() => setActiveTab('support')} onOpenTerms={() => setActiveTab('terms')} />;
-            case 'support': return <SupportChatView user={user} onClose={() => setActiveTab('profile')} />;
-            case 'terms': return <TermsView onClose={() => setActiveTab('profile')} />;
-            default: return <HomeView user={user} setTab={setActiveTab} transactions={transactions} currentBalance={balance} />;
-        }
-    };
+  const updateBalance = async (newBalance: number) => {
+      setBalance(newBalance);
+      await cloudStorage.setItem('user_balance', newBalance.toString());
+  };
 
-    return (
-        <div className="min-h-screen font-sans text-slate-900 bg-[#f8fafc] max-w-md mx-auto relative shadow-2xl">
-            <div className="px-4">
-                {renderContent()}
-            </div>
-            
-            {/* NEW MODAL JSX */}
-            {showInsufficientBalanceModal && (
-                <div className="fixed inset-0 z-[70] flex items-center justify-center px-4">
-                    <div 
-                        className="absolute inset-0 bg-black/40 backdrop-blur-sm animate-fadeIn" 
-                        onClick={() => setShowInsufficientBalanceModal(false)}
-                    ></div>
-                    <div className="bg-white rounded-3xl p-6 w-full max-w-sm shadow-2xl relative z-10 animate-scaleIn flex flex-col items-center text-center">
-                        <button onClick={() => setShowInsufficientBalanceModal(false)} className="absolute right-4 top-4 text-slate-300 hover:text-slate-500 p-1">
-                            <X size={20} />
-                        </button>
-                        
-                        <div className="py-4 flex flex-col items-center gap-3">
-                                <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center text-red-500 mb-2 shadow-sm">
-                                    <Wallet size={32} />
-                                </div>
-                                <h3 className="text-lg font-bold text-slate-800">Saldo Insuficiente</h3>
-                                <p className="text-sm text-slate-500 leading-relaxed max-w-[240px]">
-                                    Você não tem saldo suficiente para realizar esta compra.
-                                </p>
-                                <div className="w-full flex flex-col gap-2 mt-4">
-                                    <button 
-                                        onClick={() => {
-                                            setShowInsufficientBalanceModal(false);
-                                            setActiveTab('balance');
-                                        }} 
-                                        className="bg-blue-600 text-white font-bold px-6 py-3 rounded-xl active:scale-95 transition-transform w-full shadow-lg shadow-blue-200"
-                                    >
-                                        Recarregar Agora
-                                    </button>
-                                    <button 
-                                        onClick={() => setShowInsufficientBalanceModal(false)}
-                                        className="text-slate-400 font-bold text-sm py-2 active:text-slate-600"
-                                    >
-                                        Cancelar
-                                    </button>
-                                </div>
-                        </div>
-                    </div>
-                </div>
-            )}
+  const addTransaction = async (transaction: Transaction) => {
+      const newTransactions = [transaction, ...transactions];
+      setTransactions(newTransactions);
+      await cloudStorage.setItem('user_transactions', JSON.stringify(newTransactions));
+  };
 
-            <BottomNav activeTab={activeTab} setTab={setActiveTab} />
-        </div>
-    );
+  const handleDeposit = (amount: number) => {
+      const newBalance = balance + amount;
+      updateBalance(newBalance);
+      addTransaction({
+          id: Date.now().toString(),
+          type: 'deposit',
+          amount: amount,
+          date: new Date().toLocaleDateString('pt-BR'),
+          status: 'completed',
+          description: 'Depósito via Pix'
+      });
+  };
+
+  const handlePurchase = (service: Service) => {
+      if (balance >= service.price) {
+          const newBalance = balance - service.price;
+          updateBalance(newBalance);
+          addTransaction({
+              id: Date.now().toString(),
+              type: 'purchase',
+              amount: service.price,
+              date: new Date().toLocaleDateString('pt-BR'),
+              status: 'completed',
+              description: `Número ${service.name}`
+          });
+          setActiveTab('mynumbers');
+      } else {
+          // Show alert or redirect to wallet
+          alert("Saldo insuficiente! Por favor, faça uma recarga.");
+          setActiveTab('balance');
+      }
+  };
+
+  const renderContent = () => {
+      if (showSupport) return <SupportChatView user={user} onClose={() => setShowSupport(false)} />;
+      if (showTerms) return <TermsView onClose={() => setShowTerms(false)} />;
+
+      switch (activeTab) {
+          case 'home':
+              return <HomeView user={user} setTab={setActiveTab} transactions={transactions} currentBalance={balance} />;
+          case 'services':
+              return <ServicesView onPurchase={handlePurchase} />;
+          case 'mynumbers':
+              return <MyNumbersView transactions={transactions} />;
+          case 'orders':
+              return <OrdersView transactions={transactions} />;
+          case 'profile':
+              return <ProfileView user={user} onOpenSupport={() => setShowSupport(true)} onOpenTerms={() => setShowTerms(true)} />;
+          case 'balance':
+              return <BalanceView onDeposit={handleDeposit} currentBalance={balance} />;
+          default:
+              return <HomeView user={user} setTab={setActiveTab} transactions={transactions} currentBalance={balance} />;
+      }
+  };
+
+  return (
+    <div className="min-h-screen bg-[#f8fafc] font-sans text-slate-900 selection:bg-blue-100 pb-safe">
+      <div className="max-w-md mx-auto min-h-screen relative bg-slate-50/50 shadow-2xl">
+        {renderContent()}
+        {!showSupport && !showTerms && <BottomNav activeTab={activeTab} setTab={setActiveTab} />}
+      </div>
+    </div>
+  );
 };
 
 export default App;

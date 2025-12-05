@@ -1,3 +1,4 @@
+
 // Telegram Web App Types (Simplified)
 export interface TelegramUser {
     id: number;
@@ -34,6 +35,8 @@ export interface TelegramWebApp {
     expand: () => void;
     close: () => void;
     ready: () => void;
+    // Added optional method to fix TS error in telegramService.ts
+    isVersionAtLeast?: (version: string) => boolean;
     MainButton: {
         text: string;
         color: string;

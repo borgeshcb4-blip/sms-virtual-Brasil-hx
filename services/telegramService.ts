@@ -1,3 +1,4 @@
+
 import { TelegramUser } from '../types';
 
 const tg = window.Telegram?.WebApp;
@@ -48,38 +49,73 @@ export const closeApp = () => {
 export const cloudStorage = {
     setItem: async (key: string, value: string): Promise<boolean> => {
         return new Promise((resolve) => {
-            if (tg && tg.CloudStorage) {
+            // CloudStorage is only available in Telegram Web Apps version 6.9+
+            // Check if isVersionAtLeast exists (it might not in very old versions) and check version
+            const supportsCloudStorage = tg && 
+                                         tg.isVersionAtLeast && 
+                                         tg.isVersionAtLeast('6.9') && 
+                                         tg.CloudStorage;
+
+            if (supportsCloudStorage) {
                 tg.CloudStorage.setItem(key, value, (error, stored) => {
                     if (error) {
                         console.error("CloudStorage Error:", error);
-                        resolve(false);
+                        // Fallback to local storage on error
+                        try {
+                            localStorage.setItem(key, value);
+                            resolve(true);
+                        } catch (e) {
+                            resolve(false);
+                        }
                     } else {
                         resolve(stored);
                     }
                 });
             } else {
-                // Fallback LocalStorage
-                localStorage.setItem(key, value);
-                resolve(true);
+                // Fallback LocalStorage for older versions (like 6.0) or web browsers
+                try {
+                    localStorage.setItem(key, value);
+                    resolve(true);
+                } catch (e) {
+                    console.error("LocalStorage Error:", e);
+                    resolve(true); // Treat as success to not block flow
+                }
             }
         });
     },
 
     getItem: async (key: string): Promise<string | null> => {
         return new Promise((resolve) => {
-            if (tg && tg.CloudStorage) {
+            // CloudStorage is only available in Telegram Web Apps version 6.9+
+            const supportsCloudStorage = tg && 
+                                         tg.isVersionAtLeast && 
+                                         tg.isVersionAtLeast('6.9') && 
+                                         tg.CloudStorage;
+
+            if (supportsCloudStorage) {
                 tg.CloudStorage.getItem(key, (error, value) => {
                     if (error) {
                         console.error("CloudStorage Error:", error);
-                        resolve(null);
+                         // Fallback to local storage on error
+                        try {
+                            const val = localStorage.getItem(key);
+                            resolve(val);
+                        } catch (e) {
+                            resolve(null);
+                        }
                     } else {
                         resolve(value);
                     }
                 });
             } else {
-                // Fallback LocalStorage
-                const val = localStorage.getItem(key);
-                resolve(val);
+                // Fallback LocalStorage for older versions (like 6.0) or web browsers
+                try {
+                    const val = localStorage.getItem(key);
+                    resolve(val);
+                } catch (e) {
+                    console.error("LocalStorage Error:", e);
+                    resolve(null);
+                }
             }
         });
     }
