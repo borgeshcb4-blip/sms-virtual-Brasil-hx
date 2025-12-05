@@ -21,17 +21,42 @@
       body {
         background-color: #f8fafc; /* slate-50 */
         overscroll-behavior: none;
+        margin: 0;
+        padding: 0;
       }
-      /* Simple loader for initial state */
+      /* Modern Loader Styles */
       .loader-container {
         display: flex;
+        flex-direction: column;
         justify-content: center;
         align-items: center;
         height: 100vh;
-        color: #2563eb;
-        font-family: sans-serif;
-        font-size: 14px;
-        font-weight: 500;
+        width: 100%;
+        background-color: #f8fafc;
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 9999;
+      }
+      
+      .loader {
+        width: 48px;
+        height: 48px;
+        border: 4px solid #e2e8f0; /* slate-200 */
+        border-bottom-color: #2563eb; /* blue-600 - App Primary Color */
+        border-radius: 50%;
+        display: inline-block;
+        box-sizing: border-box;
+        animation: rotation 1s linear infinite;
+      }
+
+      @keyframes rotation {
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
       }
     </style>
 <script type="importmap">
@@ -49,7 +74,7 @@
   <body>
     <div id="root">
         <div class="loader-container">
-            Carregando SMS VIRTUAL...
+            <span class="loader"></span>
         </div>
     </div>
     <!-- CRITICAL: This connects the HTML to your React Entry Point -->

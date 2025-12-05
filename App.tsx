@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { 
   Home, 
@@ -456,8 +455,9 @@ const HomeView = ({ user, setTab, transactions, currentBalance }: { user: Telegr
                         <Wallet size={14} className="text-blue-200"/> Saldo Disponível
                     </p>
                 </div>
-                <h2 className="text-[2.5rem] leading-none font-extrabold tracking-tight mb-6">
-                    R$ {currentBalance.toFixed(2).split('.')[0]}<span className="text-2xl text-blue-200/80 font-bold">,{currentBalance.toFixed(2).split('.')[1]}</span>
+                {/* Fixed: Reduced font size from text-[2.5rem] to text-3xl to satisfy "not too big" */}
+                <h2 className="text-3xl leading-none font-extrabold tracking-tight mb-6">
+                    R$ {currentBalance.toFixed(2).split('.')[0]}<span className="text-xl text-blue-200/80 font-bold">,{currentBalance.toFixed(2).split('.')[1]}</span>
                 </h2>
                 <div className="w-full">
                     <button onClick={() => setTab('balance')} className="w-full bg-white/20 hover:bg-white/25 active:bg-white/30 backdrop-blur-md border border-white/10 text-white py-3.5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all shadow-lg shadow-blue-900/10">
@@ -1296,10 +1296,13 @@ const ProfileView = ({ user, onOpenSupport, onOpenTerms }: { user: TelegramUser 
             <h2 className="text-xl font-bold text-slate-800">Meu Perfil</h2>
             
             {/* Header Card (Blue) */}
-            <div className="bg-blue-600 rounded-3xl p-8 flex justify-center items-center shadow-lg shadow-blue-200">
-                <div className="w-24 h-24 rounded-full bg-white/20 flex items-center justify-center text-white backdrop-blur-sm border-2 border-white/20">
-                     {user?.photo_url ? <img src={user.photo_url} alt="Profile" className="w-full h-full rounded-full object-cover"/> : <User size={40} />}
+            {/* Reduced padding from p-8 to p-6 and avatar from w-24 to w-20 to make it "not too big" */}
+            <div className="bg-blue-600 rounded-2xl p-6 flex flex-col justify-center items-center shadow-lg shadow-blue-200 text-center">
+                <div className="w-20 h-20 rounded-full bg-white/20 flex items-center justify-center text-white backdrop-blur-sm border-2 border-white/20">
+                     {user?.photo_url ? <img src={user.photo_url} alt="Profile" className="w-full h-full rounded-full object-cover"/> : <User size={32} />}
                 </div>
+                <h3 className="text-white font-bold text-xl mt-3">{user?.first_name} {user?.last_name || ''}</h3>
+                {user?.username && <p className="text-blue-200 text-sm font-medium">@{user.username}</p>}
             </div>
 
             {/* Stats Info Grid */}
@@ -1362,7 +1365,7 @@ const ProfileView = ({ user, onOpenSupport, onOpenTerms }: { user: TelegramUser 
 
 // --- APP COMPONENT ---
 
-const App: React.FC = () => {
+export const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState('home');
   const [user, setUser] = useState<TelegramUser | null>(null);
   const [balance, setBalance] = useState(0.00);
@@ -1425,6 +1428,11 @@ const App: React.FC = () => {
           });
           setActiveTab('mynumbers');
       } else {
+          // Trigger Haptic Feedback (Vibration)
+          if (window.Telegram?.WebApp?.HapticFeedback) {
+             window.Telegram.WebApp.HapticFeedback.notificationOccurred('error');
+          }
+          
           // Show alert or redirect to wallet
           alert("Saldo insuficiente! Por favor, faça uma recarga.");
           setActiveTab('balance');
@@ -1462,5 +1470,3 @@ const App: React.FC = () => {
     </div>
   );
 };
-
-export default App;

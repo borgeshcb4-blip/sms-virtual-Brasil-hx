@@ -61,6 +61,11 @@ export interface TelegramWebApp {
         removeItem: (key: string, callback?: (err: any, stored: boolean) => void) => void;
         getKeys: (callback?: (err: any, keys: string[]) => void) => void;
     };
+    HapticFeedback: {
+        notificationOccurred: (type: 'error' | 'success' | 'warning') => void;
+        impactOccurred: (style: 'light' | 'medium' | 'heavy' | 'rigid' | 'soft') => void;
+        selectionChanged: () => void;
+    };
     setHeaderColor?: (color: string) => void;
 }
 
