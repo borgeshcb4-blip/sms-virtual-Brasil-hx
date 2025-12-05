@@ -95,6 +95,36 @@ const SERVICES: ExtendedService[] = [
   { id: '30', name: 'Tinder', price: 3.00, icon: 'bg-[#FE3C72] text-white', category: 'social', stock: 920 },
 ];
 
+// --- SKELETON COMPONENTS (SHIMMER EFFECT) ---
+const ServiceListSkeleton = () => (
+    <div className="flex items-center justify-between p-3 rounded-xl mb-1 border border-transparent">
+        <div className="flex items-center space-x-3 w-full">
+            <div className="w-9 h-9 rounded-full bg-slate-200 animate-pulse shrink-0" />
+            <div className="space-y-2 flex-1">
+                <div className="h-3 bg-slate-200 rounded w-24 animate-pulse" />
+                <div className="h-2 bg-slate-100 rounded w-16 animate-pulse" />
+            </div>
+        </div>
+        <div className="h-6 bg-slate-200 rounded-lg w-16 animate-pulse" />
+    </div>
+);
+
+const ServiceCardSkeleton = () => (
+    <div className="bg-white p-3.5 rounded-2xl shadow-sm border border-slate-100 flex items-center justify-between">
+        <div className="flex items-center space-x-3.5 w-full">
+            <div className="w-10 h-10 rounded-full bg-slate-200 animate-pulse shrink-0" />
+            <div className="space-y-2 flex-1">
+                <div className="h-3 bg-slate-200 rounded w-24 animate-pulse" />
+                <div className="h-2 bg-slate-100 rounded w-20 animate-pulse" />
+            </div>
+        </div>
+        <div className="flex flex-col items-end gap-2">
+            <div className="h-3 bg-slate-200 rounded w-12 animate-pulse" />
+            <div className="h-6 bg-slate-200 rounded w-16 animate-pulse" />
+        </div>
+    </div>
+);
+
 // --- COMPONENTS ---
 
 // 1. Navigation Bar
@@ -133,10 +163,19 @@ const HomeView = ({ user, setTab, transactions, currentBalance }: { user: Telegr
   const photoUrl = user?.photo_url;
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<'all' | 'social' | 'bank' | 'other'>('all');
+  const [isServicesLoading, setIsServicesLoading] = useState(true);
   
   // Novos estados para a notificação do sino
   const [hasUnreadNotification, setHasUnreadNotification] = useState(false);
   const [showNotificationModal, setShowNotificationModal] = useState(false);
+
+  useEffect(() => {
+    // Simulate loading time for shimmer effect
+    const timer = setTimeout(() => {
+        setIsServicesLoading(false);
+    }, 2000);
+    return () => clearTimeout(timer);
+  }, []);
 
   const categories = [
     { id: 'all', label: 'Todos', icon: LayoutGrid },
@@ -356,20 +395,25 @@ const HomeView = ({ user, setTab, transactions, currentBalance }: { user: Telegr
                     />
                 </div>
                 <div className="space-y-1 max-h-[260px] overflow-y-auto pr-1 custom-scrollbar px-1">
-                    {filteredServices.length > 0 ? filteredServices.map(service => (
-                        <div key={service.id} onClick={() => setTab('services')} className={`flex items-center justify-between p-3 hover:bg-slate-50 rounded-xl cursor-pointer transition-colors group border ${service.id === 'specific' ? 'bg-slate-50 border-blue-100' : 'border-transparent hover:border-slate-100'}`}>
-                            <div className="flex items-center space-x-3">
-                                <div className={`w-9 h-9 rounded-full ${service.icon} flex items-center justify-center font-bold shadow-sm ring-1 ring-black/5`}>
-                                    {service.id === 'specific' ? <MoreHorizontal size={18}/> : service.name[0]}
+                    {isServicesLoading ? (
+                        // Shimmer Skeleton Loading
+                        Array(5).fill(0).map((_, i) => <ServiceListSkeleton key={i} />)
+                    ) : (
+                        filteredServices.length > 0 ? filteredServices.map(service => (
+                            <div key={service.id} onClick={() => setTab('services')} className={`flex items-center justify-between p-3 hover:bg-slate-50 rounded-xl cursor-pointer transition-colors group border ${service.id === 'specific' ? 'bg-slate-50 border-blue-100' : 'border-transparent hover:border-slate-100'}`}>
+                                <div className="flex items-center space-x-3">
+                                    <div className={`w-9 h-9 rounded-full ${service.icon} flex items-center justify-center font-bold shadow-sm ring-1 ring-black/5`}>
+                                        {service.id === 'specific' ? <MoreHorizontal size={18}/> : service.name[0]}
+                                    </div>
+                                    <span className="font-bold text-slate-700 text-sm group-hover:text-slate-900">{service.name}</span>
+                                    {service.isHot && <span className="text-[9px] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded-md font-bold">HOT</span>}
+                                    {service.isNew && <span className="text-[9px] bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded-md font-bold">NOVO</span>}
                                 </div>
-                                <span className="font-bold text-slate-700 text-sm group-hover:text-slate-900">{service.name}</span>
-                                {service.isHot && <span className="text-[9px] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded-md font-bold">HOT</span>}
-                                {service.isNew && <span className="text-[9px] bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded-md font-bold">NOVO</span>}
+                                <span className="font-extrabold text-slate-700 text-sm bg-slate-100 px-2 py-1 rounded-lg group-hover:bg-white group-hover:shadow-sm transition-all">R$ {service.price.toFixed(2)}</span>
                             </div>
-                            <span className="font-extrabold text-slate-700 text-sm bg-slate-100 px-2 py-1 rounded-lg group-hover:bg-white group-hover:shadow-sm transition-all">R$ {service.price.toFixed(2)}</span>
-                        </div>
-                    )) : (
-                        <div className="p-4 text-center text-slate-400 text-xs font-medium">Nenhum serviço encontrado. Tente a opção "Específico".</div>
+                        )) : (
+                            <div className="p-4 text-center text-slate-400 text-xs font-medium">Nenhum serviço encontrado. Tente a opção "Específico".</div>
+                        )
                     )}
                 </div>
             </div>
@@ -381,6 +425,15 @@ const HomeView = ({ user, setTab, transactions, currentBalance }: { user: Telegr
 
 const ServicesView = ({ onPurchase }: { onPurchase: (service: Service) => void }) => {
     const [searchTerm, setSearchTerm] = useState('');
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        // Simulate loading
+        const timer = setTimeout(() => {
+            setIsLoading(false);
+        }, 1500);
+        return () => clearTimeout(timer);
+    }, []);
 
     const filteredServices = useMemo(() => {
         const term = searchTerm.toLowerCase();
@@ -404,38 +457,43 @@ const ServicesView = ({ onPurchase }: { onPurchase: (service: Service) => void }
         </div>
 
         <div className="grid gap-2.5">
-            {filteredServices.length > 0 ? (
-                filteredServices.map(service => (
-                <div key={service.id} className="bg-white p-3.5 rounded-2xl shadow-sm border border-slate-100 flex items-center justify-between active:scale-[0.99] transition-transform">
-                     <div className="flex items-center space-x-3.5">
-                        <div className={`w-10 h-10 rounded-full ${service.icon} flex items-center justify-center font-bold shadow-sm ring-2 ring-white`}>
-                             {service.id === 'specific' ? <MoreHorizontal size={18}/> : service.name.substring(0, 1)}
-                        </div>
-                        <div>
-                            <div className="flex items-center gap-2">
-                                <p className="font-bold text-slate-800 text-sm">{service.name}</p>
-                                {service.isHot && <span className="text-[9px] bg-red-100 text-red-600 px-1.5 py-0.5 rounded font-bold">HOT</span>}
+            {isLoading ? (
+                // Shimmer Effect Skeletons
+                Array(7).fill(0).map((_, i) => <ServiceCardSkeleton key={i} />)
+            ) : (
+                filteredServices.length > 0 ? (
+                    filteredServices.map(service => (
+                    <div key={service.id} className="bg-white p-3.5 rounded-2xl shadow-sm border border-slate-100 flex items-center justify-between active:scale-[0.99] transition-transform">
+                        <div className="flex items-center space-x-3.5">
+                            <div className={`w-10 h-10 rounded-full ${service.icon} flex items-center justify-center font-bold shadow-sm ring-2 ring-white`}>
+                                {service.id === 'specific' ? <MoreHorizontal size={18}/> : service.name.substring(0, 1)}
                             </div>
-                            <p className="text-[11px] text-slate-400 font-medium">
-                                Disponível: <span className="font-bold text-slate-600">{service.stock || 0}</span>
-                            </p>
+                            <div>
+                                <div className="flex items-center gap-2">
+                                    <p className="font-bold text-slate-800 text-sm">{service.name}</p>
+                                    {service.isHot && <span className="text-[9px] bg-red-100 text-red-600 px-1.5 py-0.5 rounded font-bold">HOT</span>}
+                                </div>
+                                <p className="text-[11px] text-slate-400 font-medium">
+                                    Disponível: <span className="font-bold text-slate-600">{service.stock || 0}</span>
+                                </p>
+                            </div>
+                        </div>
+                        <div className="flex flex-col items-end gap-1">
+                            <p className="font-bold text-blue-600">R$ {service.price.toFixed(2)}</p>
+                            <button 
+                                onClick={() => onPurchase(service)}
+                                className="bg-blue-600 text-white text-[10px] px-3 py-1.5 rounded-lg font-bold shadow-md shadow-blue-200 active:bg-blue-700 uppercase tracking-wide"
+                            >
+                                Comprar
+                            </button>
                         </div>
                     </div>
-                    <div className="flex flex-col items-end gap-1">
-                         <p className="font-bold text-blue-600">R$ {service.price.toFixed(2)}</p>
-                         <button 
-                            onClick={() => onPurchase(service)}
-                            className="bg-blue-600 text-white text-[10px] px-3 py-1.5 rounded-lg font-bold shadow-md shadow-blue-200 active:bg-blue-700 uppercase tracking-wide"
-                         >
-                             Comprar
-                         </button>
+                ))) : (
+                    <div className="flex flex-col items-center justify-center py-12 text-slate-400">
+                        <Search size={32} className="mb-3 opacity-50"/>
+                        <p className="font-medium text-sm">Nenhum serviço encontrado</p>
                     </div>
-                </div>
-            ))) : (
-                <div className="flex flex-col items-center justify-center py-12 text-slate-400">
-                    <Search size={32} className="mb-3 opacity-50"/>
-                    <p className="font-medium text-sm">Nenhum serviço encontrado</p>
-                </div>
+                )
             )}
         </div>
     </div>
@@ -825,7 +883,6 @@ const App = () => {
         initTelegramApp();
         const tgUser = getTelegramUser();
         setUser(tgUser);
-        // Simulate fetching data
         setBalance(0.00);
     }, []);
 
