@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { 
   Home, 
   ShoppingCart, 
@@ -41,11 +41,16 @@ import {
   Headphones,
   FileText,
   Star,
-  Settings
+  Settings,
+  Send,
+  Bot,
+  ShieldAlert,
+  Lock
 } from 'lucide-react';
 import { initTelegramApp, getTelegramUser, cloudStorage } from './services/telegramService';
 import { gerarPix } from './services/hoopayService';
 import { TelegramUser, Service, Transaction } from './types';
+import { GoogleGenAI } from "@google/genai";
 
 // --- MOCK DATA ---
 interface ExtendedService extends Service {
@@ -136,6 +141,8 @@ const BottomNav = ({ activeTab, setTab }: { activeTab: string, setTab: (t: strin
     { id: 'orders', icon: ClipboardList, label: 'Pedidos' },
     { id: 'profile', icon: User, label: 'Perfil' },
   ];
+
+  if (activeTab === 'support' || activeTab === 'terms') return null; // Hide nav when in chat or terms
 
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-100 pb-safe pt-2 px-4 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-50">
@@ -391,7 +398,7 @@ const HomeView = ({ user, setTab, transactions, currentBalance }: { user: Telegr
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         placeholder="Buscar serviço específico..." 
-                        className="w-full pl-9 pr-4 py-2.5 rounded-lg border border-transparent focus:bg-white bg-slate-50 focus:outline-none focus:border-blue-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all text-sm placeholder:text-slate-400 text-slate-800 font-medium"
+                        className="w-full pl-9 pr-4 py-2.5 rounded-lg border border-transparent focus:bg-white bg-slate-50 focus:outline-none focus:border-blue-500 focus:border-blue-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all text-sm placeholder:text-slate-400 text-slate-800 font-medium"
                     />
                 </div>
                 <div className="space-y-1 max-h-[260px] overflow-y-auto pr-1 custom-scrollbar px-1">
@@ -451,7 +458,7 @@ const ServicesView = ({ onPurchase }: { onPurchase: (service: Service) => void }
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     placeholder="Buscar serviço..." 
-                    className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 bg-slate-50 transition-all text-sm font-medium text-slate-800"
+                    className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-blue-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 bg-slate-50 transition-all text-sm font-medium text-slate-800"
                 />
             </div>
         </div>
@@ -781,7 +788,338 @@ const BalanceView = ({ onDeposit, currentBalance }: { onDeposit: (amount: number
     );
 };
 
-const ProfileView = ({ user }: { user: TelegramUser | null }) => {
+interface Message {
+    id: string;
+    text: string;
+    isUser: boolean;
+    timestamp: Date;
+}
+
+const SupportChatView = ({ user, onClose }: { user: TelegramUser | null, onClose: () => void }) => {
+    const [messages, setMessages] = useState<Message[]>([
+        {
+            id: '1',
+            text: `Olá ${user?.first_name || 'Visitante'}! Sou o assistente virtual do Ativa SMS. Como posso ajudar você hoje com seus números ou recargas?`,
+            isUser: false,
+            timestamp: new Date()
+        }
+    ]);
+    const [input, setInput] = useState('');
+    const [isTyping, setIsTyping] = useState(false);
+    const messagesEndRef = useRef<HTMLDivElement>(null);
+    const chatSessionRef = useRef<any>(null);
+
+    const scrollToBottom = () => {
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    };
+
+    useEffect(() => {
+        scrollToBottom();
+    }, [messages, isTyping]);
+
+    // Initialize Gemini
+    useEffect(() => {
+        const initChat = async () => {
+            const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+            
+            // Build services list string
+            const servicesList = SERVICES.map(s => `- ${s.name}: R$ ${s.price.toFixed(2)} (${s.category})`).join('\n');
+            
+            const systemInstruction = `
+            Você é o assistente virtual oficial do "Ativa SMS", um serviço de números virtuais para receber SMS.
+            
+            INFORMAÇÕES DO USUÁRIO:
+            Nome: ${user?.first_name || 'Visitante'}
+            
+            SUAS DIRETRIZES:
+            1. SEMPRE chame o usuário pelo nome (primeiro nome).
+            2. Seu objetivo é ajudar com: comprar números, preços, recargas (Pix) e problemas de não receber SMS.
+            3. RESTRICÃO IMPORTANTE: Você NÃO deve responder sobre assuntos que não sejam relacionados ao app (ex: não responda sobre matemática, história, política, programação, conselhos de vida, etc). Se o usuário perguntar algo fora do contexto, diga educadamente que só pode ajudar com o Ativa SMS.
+            4. Tone de voz: Amigável, prestativo e direto. Use emojis ocasionalmente.
+            5. Se o usuário perguntar preços, use a tabela abaixo.
+            6. Sobre pagamentos: Aceitamos apenas PIX. O saldo cai automaticamente após o pagamento.
+            7. Se o SMS não chegar: 
+               - O valor volta para o saldo do app automaticamente após o tempo expirar.
+               - IMPORTANTÍSSIMO: Se o usuário perguntar sobre "sacar" ou "devolver dinheiro para o banco", CONFIRME QUE É POSSÍVEL.
+               - Diga: "Se os números não funcionaram para você, nós garantimos seu direito. Você pode solicitar o estorno (reembolso) do valor pago via PIX diretamente para sua conta bancária. Para isso, basta solicitar a um atendente humano."
+
+            TABELA DE SERVIÇOS E PREÇOS:
+            ${servicesList}
+            `;
+
+            try {
+                chatSessionRef.current = ai.chats.create({
+                    model: 'gemini-2.5-flash',
+                    config: {
+                        systemInstruction: systemInstruction,
+                        temperature: 0.7,
+                    }
+                });
+            } catch (error) {
+                console.error("Erro ao iniciar chat IA", error);
+            }
+        };
+
+        initChat();
+    }, [user]);
+
+    const handleSend = async () => {
+        if (!input.trim()) return;
+
+        const userMsg: Message = {
+            id: Date.now().toString(),
+            text: input,
+            isUser: true,
+            timestamp: new Date()
+        };
+
+        setMessages(prev => [...prev, userMsg]);
+        setInput('');
+        setIsTyping(true);
+
+        try {
+            if (chatSessionRef.current) {
+                const result = await chatSessionRef.current.sendMessage({ message: userMsg.text });
+                const responseText = result.text;
+                
+                const aiMsg: Message = {
+                    id: (Date.now() + 1).toString(),
+                    text: responseText,
+                    isUser: false,
+                    timestamp: new Date()
+                };
+                setMessages(prev => [...prev, aiMsg]);
+            } else {
+                // Fallback if AI init failed
+                setTimeout(() => {
+                    setMessages(prev => [...prev, {
+                        id: (Date.now() + 1).toString(),
+                        text: "Desculpe, estou com problemas de conexão no momento. Tente novamente mais tarde.",
+                        isUser: false,
+                        timestamp: new Date()
+                    }]);
+                }, 1000);
+            }
+        } catch (error) {
+            console.error("Erro ao enviar mensagem", error);
+             setMessages(prev => [...prev, {
+                id: (Date.now() + 1).toString(),
+                text: "Ocorreu um erro ao processar sua mensagem.",
+                isUser: false,
+                timestamp: new Date()
+            }]);
+        } finally {
+            setIsTyping(false);
+        }
+    };
+
+    const handleKeyDown = (e: React.KeyboardEvent) => {
+        if (e.key === 'Enter') handleSend();
+    };
+
+    return (
+        <div className="flex flex-col h-[100vh] bg-slate-50 fixed inset-0 z-[60]">
+            {/* Header */}
+            <div className="bg-white border-b border-slate-100 p-4 flex items-center justify-between shadow-sm">
+                <div className="flex items-center gap-3">
+                    <button onClick={onClose} className="p-2 -ml-2 hover:bg-slate-50 rounded-full transition-colors">
+                        <ChevronLeft size={24} className="text-slate-600"/>
+                    </button>
+                    <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white shadow-md shadow-blue-200">
+                            <Bot size={24} />
+                        </div>
+                        <div>
+                            <h2 className="font-bold text-slate-800 text-sm">Suporte Inteligente</h2>
+                            <div className="flex items-center gap-1.5">
+                                <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                                <span className="text-[10px] font-bold text-green-600 uppercase tracking-wide">Online</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Messages Area */}
+            <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-[#eef2f6]">
+                {messages.map((msg) => (
+                    <div key={msg.id} className={`flex ${msg.isUser ? 'justify-end' : 'justify-start'}`}>
+                        <div className={`max-w-[80%] p-3.5 rounded-2xl shadow-sm text-sm leading-relaxed ${
+                            msg.isUser 
+                            ? 'bg-blue-600 text-white rounded-tr-none' 
+                            : 'bg-white text-slate-700 rounded-tl-none border border-slate-100'
+                        }`}>
+                            {msg.text}
+                            <span className={`text-[9px] block text-right mt-1 opacity-70 ${msg.isUser ? 'text-blue-100' : 'text-slate-400'}`}>
+                                {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                            </span>
+                        </div>
+                    </div>
+                ))}
+                
+                {isTyping && (
+                    <div className="flex justify-start">
+                        <div className="bg-white p-4 rounded-2xl rounded-tl-none border border-slate-100 shadow-sm flex items-center gap-1.5">
+                            <span className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce"></span>
+                            <span className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce delay-75"></span>
+                            <span className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce delay-150"></span>
+                        </div>
+                    </div>
+                )}
+                <div ref={messagesEndRef} />
+            </div>
+
+            {/* Input Area */}
+            <div className="bg-white p-3 border-t border-slate-100 pb-safe">
+                <div className="flex items-center gap-2 bg-slate-50 p-1.5 rounded-xl border border-slate-200 focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-100 transition-all">
+                    <input 
+                        type="text" 
+                        value={input}
+                        onChange={(e) => setInput(e.target.value)}
+                        onKeyDown={handleKeyDown}
+                        placeholder="Digite sua dúvida..." 
+                        className="flex-1 bg-transparent px-3 py-2 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none font-medium"
+                    />
+                    <button 
+                        onClick={handleSend}
+                        disabled={!input.trim() || isTyping}
+                        className="bg-blue-600 text-white p-2.5 rounded-lg shadow-sm active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        <Send size={18} />
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+const TermsView = ({ onClose }: { onClose: () => void }) => {
+    return (
+        <div className="fixed inset-0 bg-[#f8fafc] z-[60] flex flex-col h-[100vh]">
+            <div className="bg-white border-b border-slate-100 p-4 flex items-center gap-3 shadow-sm shrink-0">
+                <button onClick={onClose} className="p-2 -ml-2 hover:bg-slate-50 rounded-full transition-colors text-slate-600">
+                    <ChevronLeft size={24} />
+                </button>
+                <div className="flex items-center gap-2">
+                     <div className="w-8 h-8 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center">
+                        <FileText size={18} />
+                     </div>
+                     <h2 className="font-bold text-slate-800 text-lg">Termos e Condições</h2>
+                </div>
+            </div>
+            
+            <div className="flex-1 overflow-y-auto p-5 space-y-8 text-sm text-slate-600 pb-12">
+                
+                {/* 1. Header & Verification */}
+                <div className="text-center space-y-2 mb-2">
+                    <h3 className="font-extrabold text-slate-800 text-xl">Ativa SMS</h3>
+                    <div className="inline-flex items-center gap-1.5 bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-xs font-bold border border-blue-100">
+                        <CheckCircle2 size={12} strokeWidth={3} />
+                        Mini App Verificado Telegram
+                    </div>
+                </div>
+
+                {/* 2. Sobre Nós */}
+                <section className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
+                    <h3 className="text-slate-900 font-bold text-base mb-3 flex items-center gap-2">
+                        <Info size={20} className="text-blue-600"/> 1. Sobre Nós
+                    </h3>
+                    <p className="leading-relaxed text-slate-500 mb-2">
+                        O <strong>Ativa SMS</strong> é uma plataforma automatizada que fornece números virtuais temporários para recebimento de SMS. 
+                    </p>
+                    <p className="leading-relaxed text-slate-500">
+                        Nossa missão é oferecer privacidade e segurança para usuários que desejam se cadastrar em aplicativos, sites e redes sociais sem expor seu número de telefone pessoal.
+                    </p>
+                </section>
+
+                {/* 3. Reembolsos (CRITICAL) */}
+                <section className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
+                    <h3 className="text-slate-900 font-bold text-base mb-3 flex items-center gap-2">
+                        <Banknote size={20} className="text-green-600"/> 2. Política de Reembolso
+                    </h3>
+                    
+                    <div className="space-y-4">
+                        <div className="bg-green-50 p-3 rounded-xl border border-green-100">
+                            <h4 className="font-bold text-green-800 text-xs uppercase mb-1">Reembolso Automático</h4>
+                            <p className="text-xs text-green-700 leading-relaxed">
+                                Se você comprar um número e o código SMS não chegar dentro do tempo limite (geralmente 20 minutos), o pedido é cancelado e o valor <strong>retorna automaticamente</strong> para seu saldo no app. Você não perde dinheiro.
+                            </p>
+                        </div>
+
+                        <div className="bg-blue-50 p-3 rounded-xl border border-blue-100">
+                            <h4 className="font-bold text-blue-800 text-xs uppercase mb-1">Saque Bancário (Estorno)</h4>
+                            <p className="text-xs text-blue-700 leading-relaxed">
+                                Entendemos que imprevistos acontecem. Se o serviço não funcionar para você e desejar seu dinheiro de volta na conta bancária:
+                            </p>
+                            <p className="text-xs text-blue-700 font-bold mt-2">
+                                ✅ Sim, fazemos o reembolso via PIX para sua conta bancária.
+                            </p>
+                            <p className="text-xs text-blue-700 mt-1">
+                                Basta entrar em contato com nosso Suporte e solicitar o estorno do valor recarregado que não foi utilizado.
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
+                 {/* 4. Alerta de Golpes (CRITICAL) */}
+                 <section className="bg-red-50 p-5 rounded-2xl border border-red-100 relative overflow-hidden">
+                    <div className="absolute -right-6 -top-6 bg-red-100 w-24 h-24 rounded-full opacity-50"></div>
+                    
+                    <h3 className="text-red-700 font-bold text-base mb-3 flex items-center gap-2 relative z-10">
+                        <ShieldAlert size={20}/> 3. Alerta de Golpes
+                    </h3>
+                    
+                    <div className="space-y-3 relative z-10">
+                        <p className="leading-relaxed text-red-800 text-xs font-bold">
+                            ⚠️ ATENÇÃO: NÃO CAIA EM GOLPES!
+                        </p>
+                        <p className="leading-relaxed text-red-700/90 text-xs">
+                            O Ativa SMS vende apenas o número para receber o código. <strong>Não temos vínculo com as plataformas</strong> (WhatsApp, Telegram, etc).
+                        </p>
+                        <ul className="list-disc pl-4 text-xs text-red-700/90 space-y-1">
+                            <li>Não confie em promessas de "dinheiro fácil", "renda extra garantida" ou "tarefas pagas" que exigem criar contas.</li>
+                            <li>Nunca compartilhe códigos de verificação com estranhos.</li>
+                            <li>Se alguém pediu para você comprar um número aqui para "validar" algo e ganhar dinheiro, <strong>é provável que seja um golpe</strong>.</li>
+                        </ul>
+                    </div>
+                </section>
+
+                {/* 5. Responsabilidades */}
+                <section className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
+                    <h3 className="text-slate-900 font-bold text-base mb-3 flex items-center gap-2">
+                        <Lock size={20} className="text-slate-600"/> 4. Termos de Uso
+                    </h3>
+                    <p className="text-xs leading-relaxed text-slate-500 mb-2">
+                        Ao utilizar o Ativa SMS, você concorda que:
+                    </p>
+                    <ul className="space-y-2">
+                        <li className="flex gap-2 text-xs text-slate-500">
+                            <span className="text-slate-300">•</span>
+                            Os números são temporários e descartáveis. Não devem ser usados para contas bancárias pessoais ou serviços que exijam recuperação futura.
+                        </li>
+                        <li className="flex gap-2 text-xs text-slate-500">
+                            <span className="text-slate-300">•</span>
+                            É estritamente proibido usar nossos serviços para atividades ilegais, fraudes, assédio ou spam. Contas identificadas com tais práticas serão banidas.
+                        </li>
+                        <li className="flex gap-2 text-xs text-slate-500">
+                            <span className="text-slate-300">•</span>
+                            O serviço é fornecido "como está". Embora tenhamos alta taxa de sucesso, não garantimos 100% de entrega de SMS devido a filtros das operadoras.
+                        </li>
+                    </ul>
+                </section>
+                
+                <div className="pt-4 pb-4 text-center">
+                    <p className="text-[10px] text-slate-400 font-medium">
+                        Atualizado em Março de 2025<br/>
+                        © 2025 Ativa SMS. Todos os direitos reservados.
+                    </p>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+const ProfileView = ({ user, onOpenSupport, onOpenTerms }: { user: TelegramUser | null, onOpenSupport: () => void, onOpenTerms: () => void }) => {
     const handleCloseApp = () => {
         window.Telegram?.WebApp?.close();
     };
@@ -834,16 +1172,22 @@ const ProfileView = ({ user }: { user: TelegramUser | null }) => {
 
             {/* Menu List */}
             <div className="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden">
-                <button className="w-full flex items-center justify-between p-4 hover:bg-slate-50 transition-colors border-b border-slate-50 group">
+                <button 
+                    onClick={onOpenSupport}
+                    className="w-full flex items-center justify-between p-4 hover:bg-slate-50 transition-colors border-b border-slate-50 group"
+                >
                     <div className="flex items-center gap-3">
                         <div className="w-9 h-9 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center group-hover:bg-blue-100 transition-colors">
                             <Headphones size={18} />
                         </div>
-                        <span className="font-bold text-slate-700 text-sm">Suporte</span>
+                        <span className="font-bold text-slate-700 text-sm">Suporte Inteligente</span>
                     </div>
                     <ChevronRight size={18} className="text-slate-300 group-hover:text-blue-500" />
                 </button>
-                <button className="w-full flex items-center justify-between p-4 hover:bg-slate-50 transition-colors border-b border-slate-50 group">
+                <button 
+                    onClick={onOpenTerms}
+                    className="w-full flex items-center justify-between p-4 hover:bg-slate-50 transition-colors border-b border-slate-50 group"
+                >
                     <div className="flex items-center gap-3">
                         <div className="w-9 h-9 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center group-hover:bg-emerald-100 transition-colors">
                             <ShieldCheck size={18} />
@@ -878,6 +1222,9 @@ const App = () => {
     const [user, setUser] = useState<TelegramUser | null>(null);
     const [balance, setBalance] = useState(0.00);
     const [transactions, setTransactions] = useState<Transaction[]>([]);
+    
+    // NEW STATE
+    const [showInsufficientBalanceModal, setShowInsufficientBalanceModal] = useState(false);
 
     useEffect(() => {
         initTelegramApp();
@@ -900,8 +1247,8 @@ const App = () => {
             setTransactions(prev => [newTx, ...prev]);
             setActiveTab('mynumbers');
         } else {
-            alert('Saldo insuficiente');
-            setActiveTab('balance');
+            // CHANGED HERE
+            setShowInsufficientBalanceModal(true);
         }
     };
 
@@ -925,7 +1272,9 @@ const App = () => {
             case 'mynumbers': return <MyNumbersView transactions={transactions} />;
             case 'orders': return <OrdersView transactions={transactions} />;
             case 'balance': return <BalanceView onDeposit={handleDeposit} currentBalance={balance} />;
-            case 'profile': return <ProfileView user={user} />;
+            case 'profile': return <ProfileView user={user} onOpenSupport={() => setActiveTab('support')} onOpenTerms={() => setActiveTab('terms')} />;
+            case 'support': return <SupportChatView user={user} onClose={() => setActiveTab('profile')} />;
+            case 'terms': return <TermsView onClose={() => setActiveTab('profile')} />;
             default: return <HomeView user={user} setTab={setActiveTab} transactions={transactions} currentBalance={balance} />;
         }
     };
@@ -935,6 +1284,49 @@ const App = () => {
             <div className="px-4">
                 {renderContent()}
             </div>
+            
+            {/* NEW MODAL JSX */}
+            {showInsufficientBalanceModal && (
+                <div className="fixed inset-0 z-[70] flex items-center justify-center px-4">
+                    <div 
+                        className="absolute inset-0 bg-black/40 backdrop-blur-sm animate-fadeIn" 
+                        onClick={() => setShowInsufficientBalanceModal(false)}
+                    ></div>
+                    <div className="bg-white rounded-3xl p-6 w-full max-w-sm shadow-2xl relative z-10 animate-scaleIn flex flex-col items-center text-center">
+                        <button onClick={() => setShowInsufficientBalanceModal(false)} className="absolute right-4 top-4 text-slate-300 hover:text-slate-500 p-1">
+                            <X size={20} />
+                        </button>
+                        
+                        <div className="py-4 flex flex-col items-center gap-3">
+                                <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center text-red-500 mb-2 shadow-sm">
+                                    <Wallet size={32} />
+                                </div>
+                                <h3 className="text-lg font-bold text-slate-800">Saldo Insuficiente</h3>
+                                <p className="text-sm text-slate-500 leading-relaxed max-w-[240px]">
+                                    Você não tem saldo suficiente para realizar esta compra.
+                                </p>
+                                <div className="w-full flex flex-col gap-2 mt-4">
+                                    <button 
+                                        onClick={() => {
+                                            setShowInsufficientBalanceModal(false);
+                                            setActiveTab('balance');
+                                        }} 
+                                        className="bg-blue-600 text-white font-bold px-6 py-3 rounded-xl active:scale-95 transition-transform w-full shadow-lg shadow-blue-200"
+                                    >
+                                        Recarregar Agora
+                                    </button>
+                                    <button 
+                                        onClick={() => setShowInsufficientBalanceModal(false)}
+                                        className="text-slate-400 font-bold text-sm py-2 active:text-slate-600"
+                                    >
+                                        Cancelar
+                                    </button>
+                                </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             <BottomNav activeTab={activeTab} setTab={setActiveTab} />
         </div>
     );
