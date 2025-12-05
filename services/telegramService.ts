@@ -42,3 +42,45 @@ export const closeApp = () => {
         tg.close();
     }
 };
+
+// --- CLOUD STORAGE HELPERS ---
+
+export const cloudStorage = {
+    setItem: async (key: string, value: string): Promise<boolean> => {
+        return new Promise((resolve) => {
+            if (tg && tg.CloudStorage) {
+                tg.CloudStorage.setItem(key, value, (error, stored) => {
+                    if (error) {
+                        console.error("CloudStorage Error:", error);
+                        resolve(false);
+                    } else {
+                        resolve(stored);
+                    }
+                });
+            } else {
+                // Fallback LocalStorage
+                localStorage.setItem(key, value);
+                resolve(true);
+            }
+        });
+    },
+
+    getItem: async (key: string): Promise<string | null> => {
+        return new Promise((resolve) => {
+            if (tg && tg.CloudStorage) {
+                tg.CloudStorage.getItem(key, (error, value) => {
+                    if (error) {
+                        console.error("CloudStorage Error:", error);
+                        resolve(null);
+                    } else {
+                        resolve(value);
+                    }
+                });
+            } else {
+                // Fallback LocalStorage
+                const val = localStorage.getItem(key);
+                resolve(val);
+            }
+        });
+    }
+};

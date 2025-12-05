@@ -51,6 +51,13 @@ export interface TelegramWebApp {
         onClick: (callback: () => void) => void;
         offClick: (callback: () => void) => void;
     };
+    CloudStorage: {
+        setItem: (key: string, value: string, callback?: (err: any, stored: boolean) => void) => void;
+        getItem: (key: string, callback?: (err: any, value: string) => void) => void;
+        getItems: (keys: string[], callback?: (err: any, values: any) => void) => void;
+        removeItem: (key: string, callback?: (err: any, stored: boolean) => void) => void;
+        getKeys: (callback?: (err: any, keys: string[]) => void) => void;
+    };
     setHeaderColor?: (color: string) => void;
 }
 
@@ -69,6 +76,7 @@ export interface Service {
     icon: string;
     isHot?: boolean;
     isNew?: boolean;
+    stock?: number;
 }
 
 export interface Transaction {
