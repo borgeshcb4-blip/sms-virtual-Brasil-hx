@@ -47,7 +47,10 @@ import {
   Lock,
   MapPin,
   Clock,
-  CalendarDays
+  CalendarDays,
+  HelpCircle,
+  ChevronDown,
+  ChevronUp
 } from 'lucide-react';
 import { initTelegramApp, getTelegramUser, cloudStorage } from './services/telegramService';
 import { gerarPix } from './services/hoopayService';
@@ -290,7 +293,7 @@ const BottomNav = ({ activeTab, setTab }: { activeTab: string, setTab: (t: strin
     { id: 'profile', icon: User, label: 'Perfil' },
   ];
 
-  if (activeTab === 'support' || activeTab === 'terms') return null; // Hide nav when in chat or terms
+  if (activeTab === 'support' || activeTab === 'terms' || activeTab === 'faq') return null; // Hide nav when in sub-pages
 
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-100 pb-safe pt-2 px-4 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-50">
@@ -875,6 +878,14 @@ const BalanceView = ({ onDeposit, currentBalance }: { onDeposit: (amount: number
                         >
                             {loading ? <Loader2 className="animate-spin" /> : amount > 0 ? `Gerar Pix de R$ ${amount},00` : 'Selecione um Valor'}
                         </button>
+                        <div className="mt-3 text-center space-y-0.5">
+                            <p className="text-[10px] text-slate-400 font-medium flex items-center justify-center gap-1">
+                                <ShieldCheck size={12} className="text-green-500" /> Transação 100% segura
+                            </p>
+                            <p className="text-[10px] text-slate-400 opacity-75">
+                                Processada pela hoopay LTDA • Reembolso em até 24 horas
+                            </p>
+                        </div>
                     </div>
                 </div>
              ) : (
@@ -1160,6 +1171,105 @@ const SupportChatView = ({ user, onClose }: { user: TelegramUser | null, onClose
     );
 };
 
+const FAQView = ({ onClose }: { onClose: () => void }) => {
+    const [openQuestion, setOpenQuestion] = useState<number | null>(null);
+
+    const faqs = [
+        {
+            id: 1,
+            question: "O que acontece se o SMS não chegar?",
+            answer: "Fique tranquilo! Nosso sistema é automático. Se o código SMS não chegar dentro do prazo (geralmente 20 minutos), o pedido é cancelado e o dinheiro volta para o seu saldo no aplicativo instantaneamente. Você não paga se não receber.",
+            icon: Wallet
+        },
+        {
+            id: 2,
+            question: "Quanto tempo dura o número?",
+            answer: "O número fica ativo e exclusivo para você por 20 minutos para receber o código de ativação. Após receber o código, o número é desativado. Use-o imediatamente após a compra.",
+            icon: Clock
+        },
+        {
+            id: 3,
+            question: "Aceita cartão de crédito?",
+            answer: "No momento, aceitamos apenas PIX. É o método mais rápido e seguro. O saldo cai na sua conta automaticamente assim que o pagamento é confirmado, 24 horas por dia.",
+            icon: CreditCard
+        },
+        {
+            id: 4,
+            question: "É seguro? Meus dados estão protegidos?",
+            answer: "Sim! Somos um app verificado. Todas as transações são processadas pela hoopay LTDA, garantindo segurança total. Seus dados são criptografados e não compartilhamos informações com terceiros.",
+            icon: ShieldCheck
+        }
+    ];
+
+    const toggleQuestion = (id: number) => {
+        setOpenQuestion(openQuestion === id ? null : id);
+    };
+
+    return (
+        <div className="fixed inset-0 bg-[#f8fafc] z-[60] flex flex-col h-[100vh]">
+            {/* Header */}
+            <div className="bg-white border-b border-slate-100 p-4 flex items-center gap-3 shadow-sm shrink-0">
+                <button onClick={onClose} className="p-2 -ml-2 hover:bg-slate-50 rounded-full transition-colors text-slate-600">
+                    <ChevronLeft size={24} />
+                </button>
+                <div className="flex items-center gap-2">
+                     <div className="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center">
+                        <HelpCircle size={18} />
+                     </div>
+                     <h2 className="font-bold text-slate-800 text-lg">Central de Ajuda</h2>
+                </div>
+            </div>
+
+            {/* Content */}
+            <div className="flex-1 overflow-y-auto p-5 pb-12">
+                {/* REMOVED: Blue Header Banner as requested */}
+
+                <div className="space-y-3">
+                    {faqs.map((item) => (
+                        <div 
+                            key={item.id} 
+                            className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden transition-all duration-300"
+                        >
+                            <button 
+                                onClick={() => toggleQuestion(item.id)}
+                                className="w-full p-4 flex items-center justify-between text-left hover:bg-slate-50 transition-colors"
+                            >
+                                <div className="flex items-center gap-3">
+                                    <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${openQuestion === item.id ? 'bg-blue-100 text-blue-600' : 'bg-slate-100 text-slate-500'}`}>
+                                        <item.icon size={16} />
+                                    </div>
+                                    <span className={`text-sm font-bold ${openQuestion === item.id ? 'text-blue-700' : 'text-slate-700'}`}>
+                                        {item.question}
+                                    </span>
+                                </div>
+                                {openQuestion === item.id ? <ChevronUp size={18} className="text-blue-500" /> : <ChevronDown size={18} className="text-slate-300" />}
+                            </button>
+                            
+                            {openQuestion === item.id && (
+                                <div className="px-4 pb-4 pt-0 animate-fadeIn">
+                                    <div className="pl-11 pr-2">
+                                        <p className="text-xs leading-relaxed text-slate-500 bg-slate-50 p-3 rounded-lg border border-slate-100">
+                                            {item.answer}
+                                        </p>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    ))}
+                </div>
+
+                <div className="mt-8 text-center">
+                    <p className="text-slate-400 text-xs font-medium mb-4">Não encontrou o que procurava?</p>
+                    {/* Note: This assumes onClose will take user back to Profile where they can click Support */}
+                    <button onClick={onClose} className="text-blue-600 font-bold text-sm bg-blue-50 px-6 py-3 rounded-xl hover:bg-blue-100 transition-colors active:scale-95">
+                        Voltar
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+};
+
 const TermsView = ({ onClose }: { onClose: () => void }) => {
     return (
         <div className="fixed inset-0 bg-[#f8fafc] z-[60] flex flex-col h-[100vh]">
@@ -1286,7 +1396,7 @@ const TermsView = ({ onClose }: { onClose: () => void }) => {
     );
 };
 
-const ProfileView = ({ user, onOpenSupport, onOpenTerms }: { user: TelegramUser | null, onOpenSupport: () => void, onOpenTerms: () => void }) => {
+const ProfileView = ({ user, onOpenSupport, onOpenTerms, onOpenFAQ }: { user: TelegramUser | null, onOpenSupport: () => void, onOpenTerms: () => void, onOpenFAQ: () => void }) => {
     const handleCloseApp = () => {
         window.Telegram?.WebApp?.close();
     };
@@ -1321,6 +1431,20 @@ const ProfileView = ({ user, onOpenSupport, onOpenTerms }: { user: TelegramUser 
 
             {/* Menu List */}
             <div className="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden divide-y divide-slate-50">
+                {/* FAQ BUTTON (Highlighted as primary help) */}
+                <button onClick={onOpenFAQ} className="w-full p-4 flex items-center justify-between hover:bg-slate-50 transition-colors group">
+                    <div className="flex items-center gap-4">
+                        <div className="w-10 h-10 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+                            <HelpCircle size={20} />
+                        </div>
+                        <div className="flex flex-col items-start">
+                            <span className="font-bold text-slate-700 text-sm">Perguntas Frequentes</span>
+                            <span className="text-[10px] text-slate-400 font-medium">Tire suas dúvidas aqui</span>
+                        </div>
+                    </div>
+                    <ChevronRight size={20} className="text-slate-300"/>
+                </button>
+
                 <button onClick={onOpenSupport} className="w-full p-4 flex items-center justify-between hover:bg-slate-50 transition-colors group">
                     <div className="flex items-center gap-4">
                         <div className="w-10 h-10 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition-colors">
@@ -1372,6 +1496,7 @@ export const App: React.FC = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [showSupport, setShowSupport] = useState(false);
   const [showTerms, setShowTerms] = useState(false);
+  const [showFAQ, setShowFAQ] = useState(false);
 
   useEffect(() => {
     initTelegramApp();
@@ -1440,6 +1565,7 @@ export const App: React.FC = () => {
   };
 
   const renderContent = () => {
+      if (showFAQ) return <FAQView onClose={() => setShowFAQ(false)} />;
       if (showSupport) return <SupportChatView user={user} onClose={() => setShowSupport(false)} />;
       if (showTerms) return <TermsView onClose={() => setShowTerms(false)} />;
 
@@ -1453,7 +1579,7 @@ export const App: React.FC = () => {
           case 'orders':
               return <OrdersView transactions={transactions} />;
           case 'profile':
-              return <ProfileView user={user} onOpenSupport={() => setShowSupport(true)} onOpenTerms={() => setShowTerms(true)} />;
+              return <ProfileView user={user} onOpenSupport={() => setShowSupport(true)} onOpenTerms={() => setShowTerms(true)} onOpenFAQ={() => setShowFAQ(true)} />;
           case 'balance':
               return <BalanceView onDeposit={handleDeposit} currentBalance={balance} />;
           default:
@@ -1465,7 +1591,7 @@ export const App: React.FC = () => {
     <div className="min-h-screen bg-[#f8fafc] font-sans text-slate-900 selection:bg-blue-100 pb-safe">
       <div className="max-w-md mx-auto min-h-screen relative bg-slate-50/50 shadow-2xl">
         {renderContent()}
-        {!showSupport && !showTerms && <BottomNav activeTab={activeTab} setTab={setActiveTab} />}
+        {!showSupport && !showTerms && !showFAQ && <BottomNav activeTab={activeTab} setTab={setActiveTab} />}
       </div>
     </div>
   );
