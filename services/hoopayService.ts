@@ -1,4 +1,5 @@
 
+
 // Hoopay API Service
 
 // URL de destino (Baseada na sua documentação)
@@ -47,7 +48,7 @@ export const gerarPix = async (amount: number): Promise<PixResponse> => {
             amount: Number(formattedAmount),
             customer: {
                 name: "Cliente Anônimo",
-                email: "nao_informado@ativasms.com", 
+                email: "nao_informado@cliente.com", 
                 phone: "11999999999", 
                 document: validCpf 
             },
