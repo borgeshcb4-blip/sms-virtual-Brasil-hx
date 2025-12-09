@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { 
   Home, 
@@ -67,42 +68,136 @@ const SERVICES: ExtendedService[] = [
   { id: 'specific', name: 'Serviço Específico', price: 1.50, icon: 'bg-slate-800 text-white', category: 'other', isNew: true, stock: 325 },
 
   // Redes Sociais & Mensageiros
-  { id: '1', name: 'WhatsApp', price: 3.50, icon: 'bg-[#25D366] text-white', isHot: true, category: 'social', stock: 4238 },
-  { id: '2', name: 'Telegram', price: 4.20, icon: 'bg-[#0088cc] text-white', category: 'social', stock: 1205 },
-  { id: '4', name: 'Instagram', price: 1.10, icon: 'bg-gradient-to-tr from-yellow-400 to-purple-600 text-white', category: 'social', stock: 2841 },
-  { id: '7', name: 'TikTok', price: 1.00, icon: 'bg-black text-white', category: 'social', stock: 5620 },
-  { id: '21', name: 'Facebook', price: 1.50, icon: 'bg-[#1877F2] text-white', category: 'social', stock: 3102 },
-  { id: '22', name: 'Kwai', price: 1.20, icon: 'bg-[#FF8F00] text-white', category: 'social', stock: 450 },
+  { 
+      id: '1', name: 'WhatsApp', price: 3.50, icon: 'bg-[#25D366] text-white', isHot: true, category: 'social', stock: 4238,
+      logoUrl: 'https://iili.io/fAb6sTu.png'
+  },
+  { 
+      id: '2', name: 'Telegram', price: 4.20, icon: 'bg-[#0088cc] text-white', category: 'social', stock: 1205,
+      logoUrl: 'https://iili.io/fAmgblS.jpg'
+  },
+  { 
+      id: '4', name: 'Instagram', price: 1.10, icon: 'bg-gradient-to-tr from-yellow-400 to-purple-600 text-white', category: 'social', stock: 2841,
+      logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/512px-Instagram_logo_2016.svg.png'
+  },
+  { 
+      id: '7', name: 'TikTok', price: 1.00, icon: 'bg-black text-white', category: 'social', stock: 5620,
+      logoUrl: 'https://iili.io/fAbt8NI.png'
+  },
+  { 
+      id: '21', name: 'Facebook', price: 1.50, icon: 'bg-[#1877F2] text-white', category: 'social', stock: 3102,
+      logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/2021_Facebook_icon.svg/512px-2021_Facebook_icon.svg.png'
+  },
+  { 
+      id: '22', name: 'Kwai', price: 1.20, icon: 'bg-[#FF8F00] text-white', category: 'social', stock: 450,
+      logoUrl: 'https://iili.io/fAmawqN.png'
+  },
+  { 
+      id: '30', name: 'Tinder', price: 3.00, icon: 'bg-[#FE3C72] text-white', category: 'social', stock: 920,
+      logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/TinderIcon-2017.svg/512px-TinderIcon-2017.svg.png'
+  },
+  { 
+      id: '31', name: 'Discord', price: 1.50, icon: 'bg-[#5865F2] text-white', category: 'social', stock: 1850,
+      logoUrl: 'https://iili.io/fApe4pf.png'
+  },
 
   // Bancos & Fintechs (Brasil)
-  { id: '8', name: 'Nubank', price: 3.00, icon: 'bg-[#820AD1] text-white', isHot: true, category: 'bank', stock: 892 },
-  { id: '13', name: 'Caixa Tem', price: 4.50, icon: 'bg-[#005CA9] text-white', isHot: true, category: 'bank', stock: 345 },
-  { id: '9', name: 'PicPay', price: 2.80, icon: 'bg-[#11C76F] text-white', category: 'bank', stock: 1240 },
-  { id: '11', name: 'Mercado Pago', price: 2.20, icon: 'bg-[#009EE3] text-white', category: 'bank', stock: 2100 },
-  { id: '10', name: 'Banco Inter', price: 2.50, icon: 'bg-[#FF7A00] text-white', category: 'bank', stock: 560 },
-  { id: '12', name: 'PagBank', price: 2.00, icon: 'bg-[#96C93D] text-white', category: 'bank', stock: 890 },
-  { id: '14', name: 'C6 Bank', price: 2.50, icon: 'bg-[#2E2E2E] text-white', category: 'bank', stock: 420 },
-  { id: '23', name: 'Itaú', price: 3.00, icon: 'bg-[#EC7000] text-white', category: 'bank', stock: 310 },
-  { id: '24', name: 'Bradesco', price: 3.00, icon: 'bg-[#CC092F] text-white', category: 'bank', stock: 280 },
-  { id: '25', name: 'Santander', price: 3.20, icon: 'bg-[#EC0000] text-white', category: 'bank', stock: 250 },
-  { id: '26', name: 'Banco do Brasil', price: 3.50, icon: 'bg-[#F4F613] text-blue-900', category: 'bank', stock: 305 }, 
-  { id: '27', name: 'Next', price: 2.00, icon: 'bg-[#00FF5F] text-black', category: 'bank', stock: 670 },
+  { 
+      id: '8', name: 'Nubank', price: 3.00, icon: 'bg-[#820AD1] text-white', isHot: true, category: 'bank', stock: 892,
+      logoUrl: 'https://iili.io/fAm9pWB.png'
+  },
+  { 
+      id: '13', name: 'Caixa Tem', price: 4.50, icon: 'bg-[#005CA9] text-white', isHot: true, category: 'bank', stock: 345,
+      logoUrl: 'https://iili.io/fAmw1MF.png'
+  },
+  { 
+      id: '9', name: 'PicPay', price: 2.80, icon: 'bg-[#11C76F] text-white', category: 'bank', stock: 1240,
+      logoUrl: 'https://iili.io/fR9jJAx.md.webp'
+  },
+  { 
+      id: '11', name: 'Mercado Pago', price: 2.20, icon: 'bg-[#009EE3] text-white', category: 'bank', stock: 2100,
+      logoUrl: 'https://iili.io/fAmPJbn.jpg'
+  },
+  { 
+      id: '10', name: 'Banco Inter', price: 2.50, icon: 'bg-[#FF7A00] text-white', category: 'bank', stock: 560,
+      logoUrl: 'https://iili.io/fApEILb.jpg'
+  },
+  { 
+      id: '12', name: 'PagBank', price: 2.00, icon: 'bg-[#96C93D] text-white', category: 'bank', stock: 890,
+      logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/PagSeguro_logo.svg/512px-PagSeguro_logo.svg.png'
+  },
+  { 
+      id: '14', name: 'C6 Bank', price: 2.50, icon: 'bg-[#2E2E2E] text-white', category: 'bank', stock: 420,
+      logoUrl: 'https://iili.io/fApEQje.png'
+  },
+  { 
+      id: '23', name: 'Itaú', price: 3.00, icon: 'bg-[#EC7000] text-white', category: 'bank', stock: 310,
+      logoUrl: 'https://iili.io/fAprJja.png'
+  },
+  { 
+      id: '24', name: 'Bradesco', price: 3.00, icon: 'bg-[#CC092F] text-white', category: 'bank', stock: 280,
+      logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Bradesco_logo.svg/512px-Bradesco_logo.svg.png'
+  },
+  { 
+      id: '25', name: 'Santander', price: 3.20, icon: 'bg-[#EC0000] text-white', category: 'bank', stock: 250,
+      logoUrl: 'https://iili.io/fApcVJ1.jpg'
+  },
+  { 
+      id: '26', name: 'Banco do Brasil', price: 3.50, icon: 'bg-[#F4F613] text-blue-900', category: 'bank', stock: 305,
+      logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Banco_do_Brasil_logo.svg/512px-Banco_do_Brasil_logo.svg.png'
+  }, 
+  { 
+      id: '27', name: 'Next', price: 2.00, icon: 'bg-[#00FF5F] text-black', category: 'bank', stock: 670,
+      logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/Banco_Next_logo.svg/512px-Banco_Next_logo.svg.png'
+  },
 
   // E-commerce & Delivery
-  { id: '15', name: 'Mercado Livre', price: 2.50, icon: 'bg-[#FFE600] text-blue-900', isHot: true, category: 'ecommerce', stock: 1540 },
-  { id: '16', name: 'Shopee', price: 1.80, icon: 'bg-[#EE4D2D] text-white', category: 'ecommerce', stock: 2300 },
-  { id: '17', name: 'Amazon', price: 2.00, icon: 'bg-[#232F3E] text-white', category: 'ecommerce', stock: 890 },
-  { id: '6', name: 'iFood', price: 1.50, icon: 'bg-[#EA1D2C] text-white', category: 'ecommerce', stock: 3120 },
-  { id: '5', name: 'Uber/UberEats', price: 1.20, icon: 'bg-black text-white', category: 'ecommerce', stock: 4500 },
-  { id: '18', name: '99 App', price: 1.30, icon: 'bg-[#FFBB00] text-black', category: 'ecommerce', stock: 1200 },
-  { id: '28', name: 'Zé Delivery', price: 1.50, icon: 'bg-[#FFC926] text-black', category: 'ecommerce', stock: 680 },
+  { 
+      id: '15', name: 'Mercado Livre', price: 2.50, icon: 'bg-[#FFE600] text-blue-900', isHot: true, category: 'ecommerce', stock: 1540,
+      logoUrl: 'https://iili.io/fAplW42.jpg'
+  },
+  { 
+      id: '16', name: 'Shopee', price: 1.80, icon: 'bg-[#EE4D2D] text-white', category: 'ecommerce', stock: 2300,
+      logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Shopee_logo.svg/512px-Shopee_logo.svg.png'
+  },
+  { 
+      id: '17', name: 'Amazon', price: 2.00, icon: 'bg-[#232F3E] text-white', category: 'ecommerce', stock: 890,
+      logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Amazon_icon.svg/512px-Amazon_icon.svg.png'
+  },
+  { 
+      id: '6', name: 'iFood', price: 1.50, icon: 'bg-[#EA1D2C] text-white', category: 'ecommerce', stock: 3120,
+      logoUrl: 'https://iili.io/fAmDMyQ.png'
+  },
+  { 
+      id: '5', name: 'Uber/UberEats', price: 1.20, icon: 'bg-black text-white', category: 'ecommerce', stock: 4500,
+      logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Uber_logo_2018.png/512px-Uber_logo_2018.png'
+  },
+  { 
+      id: '18', name: '99 App', price: 1.30, icon: 'bg-[#FFBB00] text-black', category: 'ecommerce', stock: 1200,
+      logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/25/99_logo.svg/512px-99_logo.svg.png'
+  },
+  { 
+      id: '28', name: 'Zé Delivery', price: 1.50, icon: 'bg-[#FFC926] text-black', category: 'ecommerce', stock: 680,
+      logoUrl: 'https://iili.io/fAp90kG.png'
+  },
 
   // Serviços & Governo
-  { id: '20', name: 'Gov.br', price: 5.00, icon: 'bg-[#002D72] text-white', isHot: true, category: 'other', stock: 150 },
-  { id: '3', name: 'Google/Gmail', price: 2.10, icon: 'bg-[#EA4335] text-white', category: 'other', stock: 5400 },
-  { id: '19', name: 'Netflix', price: 3.50, icon: 'bg-[#E50914] text-white', category: 'other', stock: 780 },
-  { id: '29', name: 'OLX', price: 2.00, icon: 'bg-[#6E0AD6] text-white', category: 'other', stock: 430 },
-  { id: '30', name: 'Tinder', price: 3.00, icon: 'bg-[#FE3C72] text-white', category: 'social', stock: 920 },
+  { 
+      id: '20', name: 'Gov.br', price: 5.00, icon: 'bg-[#002D72] text-white', isHot: true, category: 'other', stock: 150,
+      logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ee/Gov.br_logo.svg/512px-Gov.br_logo.svg.png'
+  },
+  { 
+      id: '3', name: 'Google/Gmail', price: 2.10, icon: 'bg-[#EA4335] text-white', category: 'other', stock: 5400,
+      logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/768px-Google_%22G%22_logo.svg.png'
+  },
+  { 
+      id: '19', name: 'Netflix', price: 3.50, icon: 'bg-[#E50914] text-white', category: 'other', stock: 780,
+      logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Netflix-new-icon.png/512px-Netflix-new-icon.png'
+  },
+  { 
+      id: '29', name: 'OLX', price: 2.00, icon: 'bg-[#6E0AD6] text-white', category: 'other', stock: 430,
+      logoUrl: 'https://iili.io/fAp2yDG.png'
+  },
 ];
 
 // --- SOCIAL PROOF DATA ---
@@ -197,6 +292,30 @@ const ServiceCardSkeleton = () => (
 
 // --- COMPONENTS ---
 
+// Helper for rendering Service Icon
+const ServiceIcon = ({ service, size = "w-9 h-9", rounded = "rounded-full" }: { service: Service, size?: string, rounded?: string }) => {
+    const [imgError, setImgError] = useState(false);
+
+    if (service.logoUrl && !imgError) {
+        return (
+            <div className={`${size} ${rounded} bg-white flex items-center justify-center shadow-sm border border-slate-100 p-0.5 overflow-hidden shrink-0`}>
+                <img 
+                    src={service.logoUrl} 
+                    alt={service.name} 
+                    className="w-full h-full object-contain"
+                    onError={() => setImgError(true)}
+                />
+            </div>
+        );
+    }
+    return (
+        <div className={`${size} ${rounded} ${service.icon} flex items-center justify-center font-bold shadow-sm ring-1 ring-black/5 shrink-0`}>
+            {service.id === 'specific' ? <MoreHorizontal size={14}/> : service.name[0]}
+        </div>
+    );
+};
+
+
 // Social Proof Widget (Herd Effect)
 const SocialProofWidget = () => {
     const [visible, setVisible] = useState(false);
@@ -257,9 +376,7 @@ const SocialProofWidget = () => {
     return (
         <div className={`fixed bottom-24 left-0 right-0 z-40 flex justify-center pointer-events-none transition-all duration-700 transform ${visible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
             <div className="bg-white/95 backdrop-blur-md px-3.5 py-2.5 rounded-full shadow-xl border border-slate-100 flex items-center gap-3 max-w-[95%] mx-4">
-                 <div className={`w-7 h-7 rounded-full shrink-0 flex items-center justify-center text-[10px] font-bold shadow-sm ${data.service.icon}`}>
-                    {data.service.id === 'specific' ? <MoreHorizontal size={14}/> : data.service.name[0]}
-                 </div>
+                 <ServiceIcon service={data.service} size="w-7 h-7" />
                  <div className="flex flex-col">
                      <p className="text-[11px] text-slate-800 leading-tight">
                         <span className="font-bold">{data.name}</span> ({data.state}) ativou <span className="font-bold text-blue-600">{data.service.name}</span>
@@ -315,17 +432,88 @@ const BottomNav = ({ activeTab, setTab }: { activeTab: string, setTab: (t: strin
   );
 };
 
+// --- GLOBAL HEADER COMPONENT ---
+interface AppHeaderProps {
+    user: TelegramUser | null;
+    currentBalance: number;
+    setTab: (t: string) => void;
+    hasUnreadNotification: boolean;
+    handleBellClick: () => void;
+    activeTab: string;
+}
+
+const AppHeader: React.FC<AppHeaderProps> = ({ 
+    user, 
+    currentBalance, 
+    setTab, 
+    hasUnreadNotification, 
+    handleBellClick,
+    activeTab
+}) => {
+    const photoUrl = user?.photo_url;
+    
+    const handleHomeClick = () => {
+        if (activeTab === 'home') {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        } else {
+            setTab('home');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    };
+
+    return (
+        <div className="sticky top-0 z-50 bg-[#f8fafc]/95 backdrop-blur-sm py-3 px-4 flex items-center gap-3 border-b border-transparent transition-colors duration-200">
+             {/* 1. Home Button */}
+             <button
+                className={`w-10 h-10 bg-white rounded-xl shadow-sm border border-slate-100 flex items-center justify-center active:scale-95 transition-transform shrink-0 ${activeTab === 'home' ? 'text-blue-600' : 'text-slate-700'}`}
+                onClick={handleHomeClick}
+             >
+                <Home size={20} strokeWidth={2.5} />
+             </button>
+
+             {/* 2. Balance Button (Center - Blue) */}
+             <button
+                onClick={() => setTab('balance')}
+                className="flex-1 h-10 bg-blue-600 rounded-xl shadow-lg shadow-blue-200 flex items-center justify-center text-white gap-2 active:scale-95 transition-transform"
+             >
+                <span className="font-bold text-base tracking-tight">R$ {currentBalance.toFixed(2).replace('.', ',')}</span>
+                <div className="bg-white/20 rounded-full p-0.5">
+                   <Plus size={12} strokeWidth={3} />
+                </div>
+             </button>
+
+             {/* 3. Notification Button */}
+             <button
+                onClick={handleBellClick}
+                className="w-10 h-10 bg-white rounded-xl shadow-sm border border-slate-100 flex items-center justify-center text-slate-500 relative active:scale-95 transition-transform shrink-0"
+             >
+                <Bell size={20} className="fill-slate-500 text-slate-500" />
+                 {hasUnreadNotification && (
+                    <span className="absolute top-2 right-2.5 w-2 h-2 bg-red-500 rounded-full border border-white"></span>
+                )}
+             </button>
+
+             {/* 4. Profile Button */}
+             <button
+                onClick={() => setTab('profile')}
+                className={`w-10 h-10 bg-white rounded-full shadow-sm border border-slate-100 flex items-center justify-center overflow-hidden active:scale-95 transition-transform shrink-0 ${activeTab === 'profile' ? 'ring-2 ring-blue-600' : ''}`}
+             >
+                 {photoUrl ? (
+                    <img src={photoUrl} alt="Profile" className="w-full h-full object-cover" />
+                 ) : (
+                    <User size={20} className="text-slate-700" />
+                 )}
+             </button>
+      </div>
+    );
+};
+
 // 2. Views
 
-const HomeView = ({ user, setTab, transactions, currentBalance }: { user: TelegramUser | null, setTab: (t: string) => void, transactions: Transaction[], currentBalance: number }) => {
-  const photoUrl = user?.photo_url;
+const HomeView = ({ user, setTab, transactions, currentBalance, activeNumbersCount }: { user: TelegramUser | null, setTab: (t: string) => void, transactions: Transaction[], currentBalance: number, activeNumbersCount: number }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<'all' | 'social' | 'bank' | 'other'>('all');
   const [isServicesLoading, setIsServicesLoading] = useState(true);
-  
-  // Novos estados para a notificação do sino
-  const [hasUnreadNotification, setHasUnreadNotification] = useState(false);
-  const [showNotificationModal, setShowNotificationModal] = useState(false);
 
   useEffect(() => {
     // Simulate loading time for shimmer effect
@@ -352,126 +540,14 @@ const HomeView = ({ user, setTab, transactions, currentBalance }: { user: Telegr
     });
   }, [searchTerm, selectedCategory]);
 
-  const activeNumbersCount = transactions.filter(t => t.type === 'purchase' && t.status === 'completed').length;
-
-  // Efeito para disparar a notificação após 9 segundos se não houver números
-  useEffect(() => {
-      if (activeNumbersCount === 0) {
-          const timer = setTimeout(() => {
-              setHasUnreadNotification(true);
-          }, 9000); // 9 segundos exatos
-
-          return () => clearTimeout(timer);
-      }
-  }, [activeNumbersCount]);
-
-  const handleBellClick = () => {
-      // Ao clicar, remove o badge vermelho e abre o modal
-      setHasUnreadNotification(false);
-      setShowNotificationModal(true);
-  };
-
-  const handleAcquireClick = () => {
-      setShowNotificationModal(false);
-      // Rola até o seletor de serviços
-      document.getElementById('service-selector')?.scrollIntoView({ behavior: 'smooth' });
-  };
-
-  const closeNotificationModal = () => {
-      setShowNotificationModal(false);
-  };
-
   return (
-    <div className="space-y-6 pb-28 pt-4 relative">
+    <div className="space-y-6 pb-28 relative">
       <SocialProofWidget />
 
-      {/* HEADER */}
-      <div className="flex items-center justify-between px-1 relative z-50">
-        <div className="flex items-center gap-3">
-             <button onClick={() => setTab('profile')} className="relative active:scale-95 transition-transform">
-                {photoUrl ? (
-                    <img 
-                    src={photoUrl} 
-                    alt="Profile" 
-                    className="w-10 h-10 rounded-full object-cover shadow-sm ring-2 ring-white"
-                    />
-                ) : (
-                    <div className="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center text-slate-500 shadow-sm ring-2 ring-white">
-                        <User size={20} />
-                    </div>
-                )}
-            </button>
-            <div className="flex flex-col">
-                <span className="text-slate-400 text-[10px] font-bold uppercase tracking-wider leading-none mb-0.5">Olá,</span>
-                <span className="text-slate-800 font-bold text-lg leading-none">{user?.first_name || 'Visitante'}</span>
-            </div>
-        </div>
-        <button 
-            onClick={handleBellClick}
-            className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-slate-400 shadow-sm border border-slate-100 active:bg-slate-50 relative transition-transform active:scale-95"
-        >
-            <Bell size={20} className={hasUnreadNotification ? "text-slate-600" : ""} />
-            {hasUnreadNotification && (
-                <span className="absolute top-0 right-0 w-3 h-3 bg-red-500 rounded-full border-2 border-white"></span>
-            )}
-        </button>
-      </div>
-
-      {/* NOTIFICATION MODAL */}
-      {showNotificationModal && (
-          <div className="fixed inset-0 z-[60] flex items-center justify-center px-4">
-              <div 
-                  className="absolute inset-0 bg-black/40 backdrop-blur-sm animate-fadeIn" 
-                  onClick={closeNotificationModal}
-              ></div>
-              <div className="bg-white rounded-3xl p-6 w-full max-w-sm shadow-2xl relative z-10 animate-scaleIn flex flex-col items-center text-center">
-                  <button onClick={closeNotificationModal} className="absolute right-4 top-4 text-slate-300 hover:text-slate-500 p-1">
-                      <X size={20} />
-                  </button>
-                  
-                  <div className="py-4 flex flex-col items-center gap-3">
-                        <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center text-blue-600 mb-2 shadow-sm">
-                            <Smartphone size={32} />
-                        </div>
-                        <h3 className="text-lg font-bold text-slate-800">Você ainda não tem nenhum número</h3>
-                        <p className="text-sm text-slate-500 leading-relaxed max-w-[240px]">
-                            Para receber SMS de qualquer site ou aplicativo, compre um número virtual agora mesmo.
-                        </p>
-                        <button 
-                            onClick={handleAcquireClick} 
-                            className="mt-4 bg-blue-600 text-white font-bold px-6 py-3 rounded-xl active:scale-95 transition-transform w-full shadow-lg shadow-blue-200"
-                        >
-                            Adquirir número
-                        </button>
-                  </div>
-              </div>
-          </div>
-      )}
-
-      {/* BALANCE CARD */}
-      <div className="bg-gradient-to-br from-blue-600 to-blue-700 rounded-[2rem] p-6 text-white shadow-xl shadow-blue-200/50 relative overflow-hidden group">
-             <div className="absolute -right-12 -top-12 bg-white/10 w-48 h-48 rounded-full blur-3xl group-hover:bg-white/15 transition-colors"></div>
-             <div className="absolute -left-10 -bottom-10 bg-black/10 w-32 h-32 rounded-full blur-2xl"></div>
-             <div className="relative z-10 flex flex-col items-start gap-1">
-                <div className="flex items-center justify-between w-full mb-2">
-                    <p className="text-blue-100 text-[11px] font-bold uppercase tracking-widest flex items-center gap-1.5">
-                        <Wallet size={14} className="text-blue-200"/> Saldo Disponível
-                    </p>
-                </div>
-                {/* Fixed: Reduced font size from text-[2.5rem] to text-3xl to satisfy "not too big" */}
-                <h2 className="text-3xl leading-none font-extrabold tracking-tight mb-6">
-                    R$ {currentBalance.toFixed(2).split('.')[0]}<span className="text-xl text-blue-200/80 font-bold">,{currentBalance.toFixed(2).split('.')[1]}</span>
-                </h2>
-                <div className="w-full">
-                    <button onClick={() => setTab('balance')} className="w-full bg-white/20 hover:bg-white/25 active:bg-white/30 backdrop-blur-md border border-white/10 text-white py-3.5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all shadow-lg shadow-blue-900/10">
-                        <Plus size={18} strokeWidth={3} /> Adicionar Dinheiro
-                    </button>
-                </div>
-             </div>
-      </div>
+      {/* HEADER IS NOW GLOBAL IN APP COMPONENT */}
 
       {/* STATS GRID */}
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 gap-4 px-1 pt-2">
          <div className="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 flex flex-col items-center justify-center text-center gap-1 active:scale-[0.98] transition-transform cursor-default">
              <div className="w-10 h-10 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center mb-1">
                  <Smartphone size={22} strokeWidth={2.5} />
@@ -490,7 +566,7 @@ const HomeView = ({ user, setTab, transactions, currentBalance }: { user: Telegr
 
       {/* ALERT / CTA */}
       {activeNumbersCount === 0 && (
-          <div className="bg-blue-50 border border-blue-100 rounded-2xl p-4 flex items-center justify-between gap-3 shadow-sm">
+          <div className="bg-blue-50 border border-blue-100 rounded-2xl p-4 flex items-center justify-between gap-3 shadow-sm mx-1">
                  <div className="flex items-center gap-3">
                      <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 shrink-0">
                          <Info size={20} />
@@ -510,7 +586,7 @@ const HomeView = ({ user, setTab, transactions, currentBalance }: { user: Telegr
       )}
 
       {/* SERVICE SELECTOR SECTION */}
-      <div id="service-selector" className="bg-white p-5 rounded-3xl shadow-sm border border-slate-100 space-y-5">
+      <div id="service-selector" className="bg-white p-5 rounded-3xl shadow-sm border border-slate-100 space-y-5 mx-1">
         <h3 className="font-bold text-slate-800 text-sm flex items-center gap-2">
             <ShoppingCart size={16} className="text-blue-500"/> Nova Ativação
         </h3>
@@ -562,9 +638,7 @@ const HomeView = ({ user, setTab, transactions, currentBalance }: { user: Telegr
                         filteredServices.length > 0 ? filteredServices.map(service => (
                             <div key={service.id} onClick={() => setTab('services')} className={`flex items-center justify-between p-3 hover:bg-slate-50 rounded-xl cursor-pointer transition-colors group border ${service.id === 'specific' ? 'bg-slate-50 border-blue-100' : 'border-transparent hover:border-slate-100'}`}>
                                 <div className="flex items-center space-x-3">
-                                    <div className={`w-9 h-9 rounded-full ${service.icon} flex items-center justify-center font-bold shadow-sm ring-1 ring-black/5`}>
-                                        {service.id === 'specific' ? <MoreHorizontal size={18}/> : service.name[0]}
-                                    </div>
+                                    <ServiceIcon service={service} />
                                     <span className="font-bold text-slate-700 text-sm group-hover:text-slate-900">{service.name}</span>
                                     {service.isHot && <span className="text-[9px] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded-md font-bold">HOT</span>}
                                     {service.isNew && <span className="text-[9px] bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded-md font-bold">NOVO</span>}
@@ -601,9 +675,9 @@ const ServicesView = ({ onPurchase }: { onPurchase: (service: Service) => void }
     }, [searchTerm]);
 
     return (
-    <div className="pb-28 space-y-4 pt-4">
-        <h2 className="text-xl font-bold text-slate-800 px-1">Todos Serviços</h2>
-        <div className="bg-white p-3 rounded-2xl shadow-sm border border-slate-100 sticky top-4 z-30">
+    <div className="pb-28 space-y-4 pt-2">
+        <h2 className="text-xl font-bold text-slate-800 px-1 pt-2">Todos Serviços</h2>
+        <div className="bg-white p-3 rounded-2xl shadow-sm border border-slate-100 sticky top-20 z-30">
              <div className="relative">
                 <Search className="absolute left-3.5 top-3 text-slate-400" size={18} />
                 <input 
@@ -625,9 +699,7 @@ const ServicesView = ({ onPurchase }: { onPurchase: (service: Service) => void }
                     filteredServices.map(service => (
                     <div key={service.id} className="bg-white p-3.5 rounded-2xl shadow-sm border border-slate-100 flex items-center justify-between active:scale-[0.99] transition-transform">
                         <div className="flex items-center space-x-3.5">
-                            <div className={`w-10 h-10 rounded-full ${service.icon} flex items-center justify-center font-bold shadow-sm ring-2 ring-white`}>
-                                {service.id === 'specific' ? <MoreHorizontal size={18}/> : service.name.substring(0, 1)}
-                            </div>
+                            <ServiceIcon service={service} size="w-10 h-10" />
                             <div>
                                 <div className="flex items-center gap-2">
                                     <p className="font-bold text-slate-800 text-sm">{service.name}</p>
@@ -1494,9 +1566,18 @@ export const App: React.FC = () => {
   const [user, setUser] = useState<TelegramUser | null>(null);
   const [balance, setBalance] = useState(0.00);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
+  
+  // Modals & Navigation State
   const [showSupport, setShowSupport] = useState(false);
   const [showTerms, setShowTerms] = useState(false);
   const [showFAQ, setShowFAQ] = useState(false);
+
+  // Notification Logic (Lifted to App)
+  const [hasUnreadNotification, setHasUnreadNotification] = useState(false);
+  const [showNotificationModal, setShowNotificationModal] = useState(false);
+  
+  // Computed State
+  const activeNumbersCount = transactions.filter(t => t.type === 'purchase' && t.status === 'completed').length;
 
   useEffect(() => {
     initTelegramApp();
@@ -1514,6 +1595,40 @@ export const App: React.FC = () => {
     loadData();
 
   }, []);
+
+  // Notification Timer Effect (Lifted to App)
+  useEffect(() => {
+      if (activeNumbersCount === 0) {
+          const timer = setTimeout(() => {
+              setHasUnreadNotification(true);
+          }, 9000); // 9 seconds exact
+
+          return () => clearTimeout(timer);
+      }
+  }, [activeNumbersCount]);
+
+  const handleBellClick = () => {
+      setHasUnreadNotification(false);
+      setShowNotificationModal(true);
+  };
+
+  const closeNotificationModal = () => {
+      setShowNotificationModal(false);
+  };
+
+  const handleAcquireClick = () => {
+      setShowNotificationModal(false);
+      // If we are not on home, go to home, then scroll
+      if (activeTab !== 'home') {
+          setActiveTab('home');
+          // Wait for render then scroll
+          setTimeout(() => {
+               document.getElementById('service-selector')?.scrollIntoView({ behavior: 'smooth' });
+          }, 100);
+      } else {
+           document.getElementById('service-selector')?.scrollIntoView({ behavior: 'smooth' });
+      }
+  };
 
   const updateBalance = async (newBalance: number) => {
       setBalance(newBalance);
@@ -1571,7 +1686,7 @@ export const App: React.FC = () => {
 
       switch (activeTab) {
           case 'home':
-              return <HomeView user={user} setTab={setActiveTab} transactions={transactions} currentBalance={balance} />;
+              return <HomeView user={user} setTab={setActiveTab} transactions={transactions} currentBalance={balance} activeNumbersCount={activeNumbersCount} />;
           case 'services':
               return <ServicesView onPurchase={handlePurchase} />;
           case 'mynumbers':
@@ -1583,13 +1698,62 @@ export const App: React.FC = () => {
           case 'balance':
               return <BalanceView onDeposit={handleDeposit} currentBalance={balance} />;
           default:
-              return <HomeView user={user} setTab={setActiveTab} transactions={transactions} currentBalance={balance} />;
+              return <HomeView user={user} setTab={setActiveTab} transactions={transactions} currentBalance={balance} activeNumbersCount={activeNumbersCount} />;
       }
   };
+
+  // Determine if header should be shown
+  // Visible on: Home, Services, MyNumbers, Orders
+  // Hidden on: Profile, Balance, Support/Terms/FAQ Modals
+  const showHeader = ['home', 'services', 'mynumbers', 'orders'].includes(activeTab) && !showSupport && !showTerms && !showFAQ;
 
   return (
     <div className="min-h-screen bg-[#f8fafc] font-sans text-slate-900 selection:bg-blue-100 pb-safe">
       <div className="max-w-md mx-auto min-h-screen relative bg-slate-50/50 shadow-2xl">
+        
+        {/* GLOBAL HEADER */}
+        {showHeader && (
+            <AppHeader 
+                user={user} 
+                currentBalance={balance} 
+                setTab={setActiveTab} 
+                hasUnreadNotification={hasUnreadNotification} 
+                handleBellClick={handleBellClick}
+                activeTab={activeTab}
+            />
+        )}
+
+        {/* NOTIFICATION MODAL (GLOBAL) */}
+        {showNotificationModal && (
+          <div className="fixed inset-0 z-[60] flex items-center justify-center px-4">
+              <div 
+                  className="absolute inset-0 bg-black/40 backdrop-blur-sm animate-fadeIn" 
+                  onClick={closeNotificationModal}
+              ></div>
+              <div className="bg-white rounded-3xl p-6 w-full max-w-sm shadow-2xl relative z-10 animate-scaleIn flex flex-col items-center text-center">
+                  <button onClick={closeNotificationModal} className="absolute right-4 top-4 text-slate-300 hover:text-slate-500 p-1">
+                      <X size={20} />
+                  </button>
+                  
+                  <div className="py-4 flex flex-col items-center gap-3">
+                        <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center text-blue-600 mb-2 shadow-sm">
+                            <Smartphone size={32} />
+                        </div>
+                        <h3 className="text-lg font-bold text-slate-800">Você ainda não tem nenhum número</h3>
+                        <p className="text-sm text-slate-500 leading-relaxed max-w-[240px]">
+                            Para receber SMS de qualquer site ou aplicativo, compre um número virtual agora mesmo.
+                        </p>
+                        <button 
+                            onClick={handleAcquireClick} 
+                            className="mt-4 bg-blue-600 text-white font-bold px-6 py-3 rounded-xl active:scale-95 transition-transform w-full shadow-lg shadow-blue-200"
+                        >
+                            Adquirir número
+                        </button>
+                  </div>
+              </div>
+          </div>
+        )}
+
         {renderContent()}
         {!showSupport && !showTerms && !showFAQ && <BottomNav activeTab={activeTab} setTab={setActiveTab} />}
       </div>

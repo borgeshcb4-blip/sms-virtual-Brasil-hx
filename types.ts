@@ -82,6 +82,7 @@ export interface Service {
     name: string;
     price: number;
     icon: string;
+    logoUrl?: string; // URL da imagem da logo
     isHot?: boolean;
     isNew?: boolean;
     stock?: number;
