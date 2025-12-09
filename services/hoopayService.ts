@@ -60,7 +60,7 @@ export const gerarPix = async (amount: number): Promise<PixResponse> => {
             ],
             products: [
                 {
-                    title: "Recarga Saldo Ativa SMS",
+                    title: "Recarga Saldo 𝗦𝗠𝗦 𝗩𝗜𝗥𝗧𝗨𝗔𝗟 𝗕𝗥",
                     amount: Number(formattedAmount), 
                     quantity: 1
                 }

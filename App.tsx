@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { 
   Home, 
@@ -62,29 +61,78 @@ interface ExtendedService extends Service {
 }
 
 const SERVICES: ExtendedService[] = [
-  // Item Especial: Serviço Específico
-  { id: 'specific', name: 'Serviço Específico', price: 1.50, icon: 'bg-slate-800 text-white', category: 'other', isNew: true, stock: 325 },
+  // 0. Agregador (Fixado no Topo)
+  { 
+      id: 'specific', name: 'Outros Apps e Sites', price: 1.50, icon: 'bg-slate-800 text-white', category: 'other', isNew: true, stock: 325,
+      logoUrl: 'https://iili.io/fRd2rCu.webp'
+  },
 
-  // Redes Sociais & Mensageiros
+  // 1. Mais Famosos (Top Tier)
   { 
       id: '1', name: 'WhatsApp', price: 3.50, icon: 'bg-[#25D366] text-white', isHot: true, category: 'social', stock: 4238,
       logoUrl: 'https://iili.io/fAb6sTu.png'
   },
   { 
-      id: '2', name: 'Telegram', price: 4.20, icon: 'bg-[#0088cc] text-white', category: 'social', stock: 1205,
-      logoUrl: 'https://iili.io/fAmgblS.jpg'
+      id: '4', name: 'Instagram', price: 1.10, icon: 'bg-gradient-to-tr from-yellow-400 to-purple-600 text-white', isHot: true, category: 'social', stock: 2841,
+      logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/512px-Instagram_logo_2016.svg.png'
   },
   { 
-      id: '4', name: 'Instagram', price: 1.10, icon: 'bg-gradient-to-tr from-yellow-400 to-purple-600 text-white', category: 'social', stock: 2841,
-      logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/512px-Instagram_logo_2016.svg.png'
+      id: '2', name: 'Telegram', price: 4.20, icon: 'bg-[#0088cc] text-white', isHot: true, category: 'social', stock: 1205,
+      logoUrl: 'https://iili.io/fAmgblS.jpg'
   },
   { 
       id: '7', name: 'TikTok', price: 1.00, icon: 'bg-black text-white', category: 'social', stock: 5620,
       logoUrl: 'https://iili.io/fAbt8NI.png'
   },
   { 
+      id: '3', name: 'Google, youtube, Gmail', price: 2.10, icon: 'bg-[#EA4335] text-white', isHot: true, category: 'other', stock: 5400,
+      logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/768px-Google_%22G%22_logo.svg.png'
+  },
+  
+  // 3. Bancos Populares
+  { 
+      id: '8', name: 'Nubank', price: 3.00, icon: 'bg-[#820AD1] text-white', isHot: true, category: 'bank', stock: 892,
+      logoUrl: 'https://iili.io/fAm9pWB.png'
+  },
+  { 
+      id: '13', name: 'Caixa Tem', price: 4.50, icon: 'bg-[#005CA9] text-white', isHot: true, category: 'bank', stock: 345,
+      logoUrl: 'https://iili.io/fAmw1MF.md.png'
+  },
+  { 
+      id: '9', name: 'PicPay', price: 2.80, icon: 'bg-[#11C76F] text-white', category: 'bank', stock: 1240,
+      logoUrl: 'https://iili.io/fR9jJAx.md.webp'
+  },
+
+  // 4. E-commerce & Apps Populares
+  { 
+      id: '15', name: 'Mercado Livre', price: 2.50, icon: 'bg-[#FFE600] text-blue-900', isHot: true, category: 'ecommerce', stock: 1540,
+      logoUrl: 'https://iili.io/fAplW42.jpg'
+  },
+  { 
+      id: '5', name: 'Uber/UberEats', price: 1.20, icon: 'bg-black text-white', category: 'ecommerce', stock: 4500,
+      logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Uber_logo_2018.png/512px-Uber_logo_2018.png'
+  },
+  { 
+      id: '6', name: 'iFood', price: 1.50, icon: 'bg-[#EA1D2C] text-white', category: 'ecommerce', stock: 3120,
+      logoUrl: 'https://iili.io/fAmDMyQ.png'
+  },
+  { 
+      id: '34', name: 'OpenAI / ChatGPT', price: 2.50, icon: 'bg-[#74aa9c] text-white', category: 'other', stock: 890,
+      logoUrl: 'https://iili.io/fR2ED8b.md.png'
+  },
+  { 
+      id: '20', name: 'Gov.br', price: 5.00, icon: 'bg-[#002D72] text-white', isHot: true, category: 'other', stock: 150,
+      logoUrl: 'https://iili.io/fRJ8aBj.webp'
+  },
+
+  // 5. Redes Sociais Secundárias
+  { 
       id: '21', name: 'Facebook', price: 1.50, icon: 'bg-[#1877F2] text-white', category: 'social', stock: 3102,
       logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/2021_Facebook_icon.svg/512px-2021_Facebook_icon.svg.png'
+  },
+  { 
+      id: '33', name: 'Twitter (X)', price: 1.20, icon: 'bg-black text-white', category: 'social', stock: 3200,
+      logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/X_logo_2023.svg/512px-X_logo_2023.svg.png'
   },
   { 
       id: '22', name: 'Kwai', price: 1.20, icon: 'bg-[#FF8F00] text-white', category: 'social', stock: 450,
@@ -98,20 +146,12 @@ const SERVICES: ExtendedService[] = [
       id: '31', name: 'Discord', price: 1.50, icon: 'bg-[#5865F2] text-white', category: 'social', stock: 1850,
       logoUrl: 'https://iili.io/fApe4pf.png'
   },
+  { 
+      id: '32', name: 'Snapchat', price: 1.50, icon: 'bg-[#FFFC00] text-black', category: 'social', stock: 1100,
+      logoUrl: 'https://upload.wikimedia.org/wikipedia/en/thumb/c/c4/Snapchat_logo.svg/1024px-Snapchat_logo.svg.png'
+  },
 
-  // Bancos & Fintechs (Brasil)
-  { 
-      id: '8', name: 'Nubank', price: 3.00, icon: 'bg-[#820AD1] text-white', isHot: true, category: 'bank', stock: 892,
-      logoUrl: 'https://iili.io/fAm9pWB.png'
-  },
-  { 
-      id: '13', name: 'Caixa Tem', price: 4.50, icon: 'bg-[#005CA9] text-white', isHot: true, category: 'bank', stock: 345,
-      logoUrl: 'https://iili.io/fAmw1MF.png'
-  },
-  { 
-      id: '9', name: 'PicPay', price: 2.80, icon: 'bg-[#11C76F] text-white', category: 'bank', stock: 1240,
-      logoUrl: 'https://iili.io/fR9jJAx.md.webp'
-  },
+  // 6. Outros Bancos
   { 
       id: '11', name: 'Mercado Pago', price: 2.20, icon: 'bg-[#009EE3] text-white', category: 'bank', stock: 2100,
       logoUrl: 'https://iili.io/fAmPJbn.jpg'
@@ -122,75 +162,55 @@ const SERVICES: ExtendedService[] = [
   },
   { 
       id: '12', name: 'PagBank', price: 2.00, icon: 'bg-[#96C93D] text-white', category: 'bank', stock: 890,
-      logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/PagSeguro_logo.svg/512px-PagSeguro_logo.svg.png'
+      logoUrl: 'https://iili.io/fRJVenI.jpg'
   },
   { 
       id: '14', name: 'C6 Bank', price: 2.50, icon: 'bg-[#2E2E2E] text-white', category: 'bank', stock: 420,
       logoUrl: 'https://iili.io/fApEQje.png'
   },
   { 
-      id: '23', name: 'Itaú', price: 3.00, icon: 'bg-[#EC7000] text-white', category: 'bank', stock: 310,
-      logoUrl: 'https://iili.io/fAprJja.png'
+      id: '36', name: 'RecargaPay', price: 2.00, icon: 'bg-[#1A4D8C] text-white', category: 'bank', stock: 450,
+      logoUrl: 'https://iili.io/fR2xjQR.webp'
   },
   { 
       id: '24', name: 'Bradesco', price: 3.00, icon: 'bg-[#CC092F] text-white', category: 'bank', stock: 280,
-      logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Bradesco_logo.svg/512px-Bradesco_logo.svg.png'
+      logoUrl: 'https://iili.io/fR2TMv9.jpg'
   },
   { 
       id: '25', name: 'Santander', price: 3.20, icon: 'bg-[#EC0000] text-white', category: 'bank', stock: 250,
       logoUrl: 'https://iili.io/fApcVJ1.jpg'
   },
-  { 
-      id: '26', name: 'Banco do Brasil', price: 3.50, icon: 'bg-[#F4F613] text-blue-900', category: 'bank', stock: 305,
-      logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Banco_do_Brasil_logo.svg/512px-Banco_do_Brasil_logo.svg.png'
-  }, 
-  { 
-      id: '27', name: 'Next', price: 2.00, icon: 'bg-[#00FF5F] text-black', category: 'bank', stock: 670,
-      logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/Banco_Next_logo.svg/512px-Banco_Next_logo.svg.png'
-  },
 
-  // E-commerce & Delivery
-  { 
-      id: '15', name: 'Mercado Livre', price: 2.50, icon: 'bg-[#FFE600] text-blue-900', isHot: true, category: 'ecommerce', stock: 1540,
-      logoUrl: 'https://iili.io/fAplW42.jpg'
-  },
+  // 7. Outros E-commerce
   { 
       id: '16', name: 'Shopee', price: 1.80, icon: 'bg-[#EE4D2D] text-white', category: 'ecommerce', stock: 2300,
-      logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Shopee_logo.svg/512px-Shopee_logo.svg.png'
+      logoUrl: 'https://iili.io/fRdY5Nt.md.jpg'
   },
+  { 
+      id: '35', name: 'Shein', price: 1.80, icon: 'bg-black text-white', category: 'ecommerce', stock: 1500,
+      logoUrl: 'https://iili.io/fR2zrS1.webp'
+    },
   { 
       id: '17', name: 'Amazon', price: 2.00, icon: 'bg-[#232F3E] text-white', category: 'ecommerce', stock: 890,
       logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Amazon_icon.svg/512px-Amazon_icon.svg.png'
   },
   { 
-      id: '6', name: 'iFood', price: 1.50, icon: 'bg-[#EA1D2C] text-white', category: 'ecommerce', stock: 3120,
-      logoUrl: 'https://iili.io/fAmDMyQ.png'
-  },
-  { 
-      id: '5', name: 'Uber/UberEats', price: 1.20, icon: 'bg-black text-white', category: 'ecommerce', stock: 4500,
-      logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Uber_logo_2018.png/512px-Uber_logo_2018.png'
-  },
-  { 
       id: '18', name: '99 App', price: 1.30, icon: 'bg-[#FFBB00] text-black', category: 'ecommerce', stock: 1200,
-      logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/25/99_logo.svg/512px-99_logo.svg.png'
+      logoUrl: 'https://iili.io/fR2RNCG.png'
   },
   { 
       id: '28', name: 'Zé Delivery', price: 1.50, icon: 'bg-[#FFC926] text-black', category: 'ecommerce', stock: 680,
       logoUrl: 'https://iili.io/fAp90kG.png'
   },
 
-  // Serviços & Governo
-  { 
-      id: '20', name: 'Gov.br', price: 5.00, icon: 'bg-[#002D72] text-white', isHot: true, category: 'other', stock: 150,
-      logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ee/Gov.br_logo.svg/512px-Gov.br_logo.svg.png'
-  },
-  { 
-      id: '3', name: 'Google/Gmail', price: 2.10, icon: 'bg-[#EA4335] text-white', category: 'other', stock: 5400,
-      logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/768px-Google_%22G%22_logo.svg.png'
-  },
+  // 8. Outros
   { 
       id: '19', name: 'Netflix', price: 3.50, icon: 'bg-[#E50914] text-white', category: 'other', stock: 780,
       logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Netflix-new-icon.png/512px-Netflix-new-icon.png'
+  },
+  { 
+      id: '37', name: 'Xbox', price: 2.50, icon: 'bg-[#107C10] text-white', category: 'other', stock: 650,
+      logoUrl: 'https://iili.io/fR251ou.webp'
   },
   { 
       id: '29', name: 'OLX', price: 2.00, icon: 'bg-[#6E0AD6] text-white', category: 'other', stock: 430,
@@ -487,7 +507,7 @@ const AppHeader: React.FC<AppHeaderProps> = ({
              >
                 <Bell size={20} className="fill-slate-500 text-slate-500" />
                  {hasUnreadNotification && (
-                    <span className="absolute top-2 right-2.5 w-2 h-2 bg-red-500 rounded-full border border-white"></span>
+                    <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full text-[10px] font-bold text-white flex items-center justify-center border-2 border-white shadow-sm z-10">1</span>
                 )}
              </button>
 
@@ -525,7 +545,7 @@ const HomeView = ({ user, setTab, transactions, currentBalance, activeNumbersCou
     { id: 'all', label: 'Todos', icon: LayoutGrid },
     { id: 'social', label: 'Social', icon: MessageCircle },
     { id: 'bank', label: 'Bancos', icon: Landmark },
-    { id: 'other', label: 'Específico', icon: MoreHorizontal },
+    { id: 'other', label: 'Outros', icon: MoreHorizontal },
   ];
 
   const filteredServices = useMemo(() => {
@@ -638,7 +658,7 @@ const HomeView = ({ user, setTab, transactions, currentBalance, activeNumbersCou
                                 <div className="flex items-center space-x-3">
                                     <ServiceIcon service={service} />
                                     <span className="font-bold text-slate-700 text-sm group-hover:text-slate-900">{service.name}</span>
-                                    {service.isHot && <span className="text-[9px] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded-md font-bold">HOT</span>}
+                                    {service.isHot && <span className="text-[9px] bg-red-100 text-red-600 px-1.5 py-0.5 rounded-md font-bold">HOT</span>}
                                     {service.isNew && <span className="text-[9px] bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded-md font-bold">NOVO</span>}
                                 </div>
                                 <span className="font-extrabold text-slate-700 text-sm bg-slate-100 px-2 py-1 rounded-lg group-hover:bg-white group-hover:shadow-sm transition-all">R$ {service.price.toFixed(2)}</span>
@@ -842,10 +862,11 @@ const BalanceView = ({ onDeposit, currentBalance }: { onDeposit: (amount: number
     const [step, setStep] = useState<'amount' | 'payment'>('amount');
     const [pixData, setPixData] = useState<{ payload: string, qrCode: string } | null>(null);
     const [error, setError] = useState<string | null>(null);
-    const [timeLeft, setTimeLeft] = useState(60); 
+    const [timeLeft, setTimeLeft] = useState(120); 
     const [copied, setCopied] = useState(false);
     
-    const options = [5, 10, 15, 20, 30, 50, 100, 200, 300];
+    // Removed 5 from options
+    const options = [10, 15, 20, 30, 50, 100, 200, 300];
 
     useEffect(() => {
         let interval: any;
@@ -875,7 +896,7 @@ const BalanceView = ({ onDeposit, currentBalance }: { onDeposit: (amount: number
             if (result.success && result.pixPayload && result.pixQrCode) {
                 setPixData({ payload: result.pixPayload, qrCode: result.pixQrCode });
                 setStep('payment');
-                setTimeLeft(60); 
+                setTimeLeft(120); 
                 // CRITICAL FIX: Removed onDeposit(amount) here. 
                 // Balance should only be added after confirmation/payment.
             } else {
@@ -1158,7 +1179,7 @@ const TermsView = ({ onClose }: { onClose: () => void }) => {
                 
                 {/* 1. Header & Verification */}
                 <div className="text-center space-y-2 mb-2">
-                    <h3 className="font-extrabold text-slate-800 text-xl">Ativa SMS</h3>
+                    <h3 className="font-extrabold text-slate-800 text-xl">𝗦𝗠𝗦 𝗩𝗜𝗥𝗧𝗨𝗔𝗟 𝗕𝗥</h3>
                     <div className="inline-flex items-center gap-1.5 bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-xs font-bold border border-blue-100">
                         <CheckCircle2 size={12} strokeWidth={3} />
                         Mini App Verificado Telegram
@@ -1171,7 +1192,7 @@ const TermsView = ({ onClose }: { onClose: () => void }) => {
                         <Info size={20} className="text-blue-600"/> 1. Sobre Nós
                     </h3>
                     <p className="leading-relaxed text-slate-500 mb-2">
-                        O <strong>Ativa SMS</strong> é uma plataforma automatizada que fornece números virtuais temporários para recebimento de SMS. 
+                        O <strong>𝗦𝗠𝗦 𝗩𝗜𝗥𝗧𝗨𝗔𝗟 𝗕𝗥</strong> é uma plataforma automatizada que fornece números virtuais temporários para recebimento de SMS. 
                     </p>
                     <p className="leading-relaxed text-slate-500">
                         Nossa missão é oferecer privacidade e segurança para usuários que desejam se cadastrar em aplicativos, sites e redes sociais sem expor seu número de telefone pessoal.
@@ -1220,7 +1241,7 @@ const TermsView = ({ onClose }: { onClose: () => void }) => {
                             ⚠️ ATENÇÃO: NÃO CAIA EM GOLPES!
                         </p>
                         <p className="leading-relaxed text-red-700/90 text-xs">
-                            O Ativa SMS vende apenas o número para receber o código. <strong>Não temos vínculo com as plataformas</strong> (WhatsApp, Telegram, etc).
+                            O 𝗦𝗠𝗦 𝗩𝗜𝗥𝗧𝗨𝗔𝗟 𝗕𝗥 vende apenas o número para receber o código. <strong>Não temos vínculo com as plataformas</strong> (WhatsApp, Telegram, etc).
                         </p>
                         <ul className="list-disc pl-4 text-xs text-red-700/90 space-y-1">
                             <li>Não confie em promessas de "dinheiro fácil", "renda extra garantida" ou "tarefas pagas" que exigem criar contas.</li>
@@ -1236,7 +1257,7 @@ const TermsView = ({ onClose }: { onClose: () => void }) => {
                         <Lock size={20} className="text-slate-600"/> 4. Termos de Uso
                     </h3>
                     <p className="text-xs leading-relaxed text-slate-500 mb-2">
-                        Ao utilizar o Ativa SMS, você concorda que:
+                        Ao utilizar o 𝗦𝗠𝗦 𝗩𝗜𝗥𝗧𝗨𝗔𝗟 𝗕𝗥, você concorda que:
                     </p>
                     <ul className="space-y-2">
                         <li className="flex gap-2 text-xs text-slate-500">
@@ -1257,7 +1278,7 @@ const TermsView = ({ onClose }: { onClose: () => void }) => {
                 <div className="pt-4 pb-4 text-center">
                     <p className="text-[10px] text-slate-400 font-medium">
                         Atualizado em Março de 2025<br/>
-                        © 2025 Ativa SMS. Todos os direitos reservados.
+                        © 2025 𝗦𝗠𝗦 𝗩𝗜𝗥𝗧𝗨𝗔𝗟 𝗕𝗥. Todos os direitos reservados.
                     </p>
                 </div>
             </div>
@@ -1531,32 +1552,43 @@ export const App: React.FC = () => {
             />
         )}
 
-        {/* NOTIFICATION MODAL (GLOBAL) */}
+        {/* NOTIFICATION MODAL (Telegram Message Style) */}
         {showNotificationModal && (
-          <div className="fixed inset-0 z-[60] flex items-center justify-center px-4">
+          <div className="fixed inset-0 z-[60] flex flex-col justify-end pb-[6.5rem] px-4">
               <div 
-                  className="absolute inset-0 bg-black/40 backdrop-blur-sm animate-fadeIn" 
+                  className="absolute inset-0 bg-black/20 backdrop-blur-[1px] animate-fadeIn" 
                   onClick={closeNotificationModal}
               ></div>
-              <div className="bg-white rounded-3xl p-6 w-full max-w-sm shadow-2xl relative z-10 animate-scaleIn flex flex-col items-center text-center">
-                  <button onClick={closeNotificationModal} className="absolute right-4 top-4 text-slate-300 hover:text-slate-500 p-1">
-                      <X size={20} />
-                  </button>
+              
+              {/* Telegram Message Lookalike */}
+              <div className="relative z-10 flex items-end gap-2 animate-slideUp">
+                  {/* Avatar */}
+                  <div className="w-9 h-9 rounded-full bg-blue-500 flex items-center justify-center text-white shrink-0 mb-1 shadow-sm">
+                      <Smartphone size={18} strokeWidth={2.5} />
+                  </div>
                   
-                  <div className="py-4 flex flex-col items-center gap-3">
-                        <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center text-blue-600 mb-2 shadow-sm">
-                            <Smartphone size={32} />
-                        </div>
-                        <h3 className="text-lg font-bold text-slate-800">Você ainda não tem nenhum número</h3>
-                        <p className="text-sm text-slate-500 leading-relaxed max-w-[240px]">
-                            Para receber SMS de qualquer site ou aplicativo, compre um número virtual agora mesmo.
-                        </p>
-                        <button 
-                            onClick={handleAcquireClick} 
-                            className="mt-4 bg-blue-600 text-white font-bold px-6 py-3 rounded-xl active:scale-95 transition-transform w-full shadow-lg shadow-blue-200"
-                        >
-                            Adquirir número
-                        </button>
+                  {/* Bubble */}
+                  <div className="bg-white rounded-2xl rounded-bl-none p-3 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.1),0_10px_20px_-2px_rgba(0,0,0,0.04)] max-w-[85%] relative">
+                      {/* Tail SVG */}
+                      <svg className="absolute -bottom-[0px] -left-[9px] w-[10px] h-[20px] fill-white" viewBox="0 0 10 20">
+                          <path d="M10,0 L10,20 L0,20 C0,20 8,20 8,10 C8,0 10,0 10,0 Z" />
+                      </svg>
+
+                      <div className="flex justify-between items-baseline mb-1 gap-4">
+                          <span className="text-[#3b82f6] font-bold text-xs">𝗦𝗠𝗦 𝗩𝗜𝗥𝗧𝗨𝗔𝗟 𝗕𝗥</span>
+                          <span className="text-slate-400 text-[10px]">agora</span>
+                      </div>
+                      <p className="text-sm text-slate-800 leading-snug">
+                         Você ainda não tem nenhum número. Compre agora para receber SMS!
+                      </p>
+                      
+                      {/* Button inside bubble */}
+                      <button 
+                          onClick={handleAcquireClick} 
+                          className="mt-3 w-full bg-blue-50 hover:bg-blue-100 text-blue-600 font-bold text-xs py-2.5 rounded-lg transition-colors flex items-center justify-center gap-1.5"
+                      >
+                          Adquirir Número <ArrowUpRight size={14} />
+                      </button>
                   </div>
               </div>
           </div>
