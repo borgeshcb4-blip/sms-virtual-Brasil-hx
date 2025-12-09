@@ -50,6 +50,23 @@
         animation: rotation 1s linear infinite;
       }
 
+      /* Shimmer Effect Animation for Buttons */
+      @keyframes shimmer {
+        0% {
+          transform: translateX(-150%);
+        }
+        50% {
+          transform: translateX(150%);
+        }
+        100% {
+          transform: translateX(150%);
+        }
+      }
+
+      .animate-shimmer {
+        animation: shimmer 1.5s infinite;
+      }
+
       @keyframes rotation {
         0% {
             transform: rotate(0deg);

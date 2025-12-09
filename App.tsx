@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { 
   Home, 
@@ -49,7 +50,11 @@ import {
   CalendarDays,
   HelpCircle,
   ChevronDown,
-  ChevronUp
+  ChevronUp,
+  Flame,
+  Rocket,
+  Eye,
+  BadgeDollarSign
 } from 'lucide-react';
 import { initTelegramApp, getTelegramUser, cloudStorage } from './services/telegramService';
 import { gerarPix } from './services/hoopayService';
@@ -232,50 +237,54 @@ const BRAZILIAN_STATES = [
 ];
 
 const TIME_VARIATIONS = [
-    // Live (Apenas 1 chance, raro)
+    // Live (Raríssimo - apenas 1 chance)
     { label: "agora", isLive: true },
     
-    // Minutos Variados
+    // Minutos (Poucos)
     { label: "há 2 min", isLive: false },
-    { label: "há 4 min", isLive: false },
-    { label: "há 7 min", isLive: false },
-    { label: "há 9 min", isLive: false },
-    { label: "há 12 min", isLive: false },
-    { label: "há 16 min", isLive: false },
-    { label: "há 23 min", isLive: false },
-    { label: "há 28 min", isLive: false },
-    { label: "há 34 min", isLive: false },
-    { label: "há 41 min", isLive: false },
-    { label: "há 47 min", isLive: false },
-    { label: "há 53 min", isLive: false },
-    { label: "há 59 min", isLive: false },
+    { label: "há 14 min", isLive: false },
 
-    // Horas Variadas (Maioria)
+    // Horas (Maioria absoluta)
     { label: "há 1 hora", isLive: false },
     { label: "há 1 hora", isLive: false },
     { label: "há 2 horas", isLive: false },
     { label: "há 2 horas", isLive: false },
     { label: "há 3 horas", isLive: false },
+    { label: "há 3 horas", isLive: false },
+    { label: "há 4 horas", isLive: false },
     { label: "há 4 horas", isLive: false },
     { label: "há 5 horas", isLive: false },
+    { label: "há 5 horas", isLive: false },
+    { label: "há 6 horas", isLive: false },
     { label: "há 6 horas", isLive: false },
     { label: "há 7 horas", isLive: false },
+    { label: "há 8 horas", isLive: false },
     { label: "há 9 horas", isLive: false },
-    { label: "há 11 horas", isLive: false },
+    { label: "há 10 horas", isLive: false },
+    { label: "há 12 horas", isLive: false },
     { label: "há 14 horas", isLive: false },
+    { label: "há 16 horas", isLive: false },
     { label: "há 18 horas", isLive: false },
+    { label: "há 20 horas", isLive: false },
     { label: "há 21 horas", isLive: false },
     { label: "há 23 horas", isLive: false },
 
-    // Dias (Perspectiva de longo prazo)
+    // Dias (Muitos para dar volume)
+    { label: "há 1 dia", isLive: false },
+    { label: "há 1 dia", isLive: false },
+    { label: "há 1 dia", isLive: false },
+    { label: "há 1 dia", isLive: false },
+    { label: "ontem", isLive: false },
     { label: "ontem", isLive: false },
     { label: "ontem", isLive: false },
     { label: "ontem", isLive: false },
     { label: "há 2 dias", isLive: false },
     { label: "há 2 dias", isLive: false },
     { label: "há 3 dias", isLive: false },
+    { label: "há 3 dias", isLive: false },
     { label: "há 4 dias", isLive: false },
     { label: "há 5 dias", isLive: false },
+    { label: "há 6 dias", isLive: false },
 ];
 
 // --- SKELETON COMPONENTS (SHIMMER EFFECT) ---
@@ -345,6 +354,15 @@ const SocialProofWidget = () => {
         isLive: boolean
     } | null>(null);
 
+    // IDs de serviços populares para prova social (Atualizado: WhatsApp, Google, OpenAI, Discord, Outros)
+    // 1: WhatsApp, 3: Google/YouTube/Gmail, 34: OpenAI, 31: Discord, specific: Outros
+    const POPULAR_IDS = ['1', '3', '34', '31', 'specific'];
+    
+    const popularServices = useMemo(() => {
+        // Filter ONLY the requested services to appear in the popup
+        return SERVICES.filter(s => POPULAR_IDS.includes(s.id));
+    }, []);
+
     useEffect(() => {
         let timeoutId: ReturnType<typeof setTimeout>;
         let hideTimeoutId: ReturnType<typeof setTimeout>;
@@ -357,7 +375,9 @@ const SocialProofWidget = () => {
                 // Generate random data
                 const randomName = BRAZILIAN_NAMES[Math.floor(Math.random() * BRAZILIAN_NAMES.length)];
                 const randomState = BRAZILIAN_STATES[Math.floor(Math.random() * BRAZILIAN_STATES.length)];
-                const randomService = SERVICES[Math.floor(Math.random() * SERVICES.length)];
+                
+                // Select only from popular services
+                const randomService = popularServices[Math.floor(Math.random() * popularServices.length)];
                 
                 // Random Time Label from extended list
                 const timeObj = TIME_VARIATIONS[Math.floor(Math.random() * TIME_VARIATIONS.length)];
@@ -387,7 +407,7 @@ const SocialProofWidget = () => {
             clearTimeout(timeoutId);
             clearTimeout(hideTimeoutId);
         };
-    }, []);
+    }, [popularServices]);
 
     if (!data) return null;
 
@@ -422,7 +442,7 @@ const SocialProofWidget = () => {
 const BottomNav = ({ activeTab, setTab }: { activeTab: string, setTab: (t: string) => void }) => {
   const navItems = [
     { id: 'home', icon: Home, label: 'Início' },
-    { id: 'services', icon: ShoppingCart, label: 'Serviços' },
+    // REMOVED SERVICES TAB AS REQUESTED
     { id: 'mynumbers', icon: MessageSquareText, label: 'Meus Números' },
     { id: 'orders', icon: ClipboardList, label: 'Pedidos' },
     { id: 'profile', icon: User, label: 'Perfil' },
@@ -528,7 +548,7 @@ const AppHeader: React.FC<AppHeaderProps> = ({
 
 // 2. Views
 
-const HomeView = ({ user, setTab, transactions, currentBalance, activeNumbersCount }: { user: TelegramUser | null, setTab: (t: string) => void, transactions: Transaction[], currentBalance: number, activeNumbersCount: number }) => {
+const HomeView = ({ user, setTab, transactions, currentBalance, activeNumbersCount, onPurchase }: { user: TelegramUser | null, setTab: (t: string) => void, transactions: Transaction[], currentBalance: number, activeNumbersCount: number, onPurchase: (service: Service) => void }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<'all' | 'social' | 'bank' | 'other'>('all');
   const [isServicesLoading, setIsServicesLoading] = useState(true);
@@ -645,7 +665,7 @@ const HomeView = ({ user, setTab, transactions, currentBalance, activeNumbersCou
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         placeholder="Buscar serviço específico..." 
-                        className="w-full pl-9 pr-4 py-2.5 rounded-lg border border-transparent focus:bg-white bg-slate-50 focus:outline-none focus:border-blue-500 focus:border-blue-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all text-sm placeholder:text-slate-400 text-slate-800 font-medium"
+                        className="w-full pl-9 pr-4 py-2.5 rounded-lg border border-transparent focus:bg-white bg-slate-50 focus:outline-none focus:border-blue-500 focus:border-blue-500 focus:border-blue-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all text-sm placeholder:text-slate-400 text-slate-800 font-medium"
                     />
                 </div>
                 <div className="space-y-1 max-h-[260px] overflow-y-auto pr-1 custom-scrollbar px-1">
@@ -654,14 +674,41 @@ const HomeView = ({ user, setTab, transactions, currentBalance, activeNumbersCou
                         Array(5).fill(0).map((_, i) => <ServiceListSkeleton key={i} />)
                     ) : (
                         filteredServices.length > 0 ? filteredServices.map(service => (
-                            <div key={service.id} onClick={() => setTab('services')} className={`flex items-center justify-between p-3 hover:bg-slate-50 rounded-xl cursor-pointer transition-colors group border ${service.id === 'specific' ? 'bg-slate-50 border-blue-100' : 'border-transparent hover:border-slate-100'}`}>
+                            <div key={service.id} className={`flex items-center justify-between p-3 hover:bg-slate-50 rounded-xl cursor-pointer transition-colors group border ${service.id === 'specific' ? 'bg-slate-50 border-blue-100' : 'border-transparent hover:border-slate-100'}`}>
                                 <div className="flex items-center space-x-3">
                                     <ServiceIcon service={service} />
-                                    <span className="font-bold text-slate-700 text-sm group-hover:text-slate-900">{service.name}</span>
-                                    {service.isHot && <span className="text-[9px] bg-red-100 text-red-600 px-1.5 py-0.5 rounded-md font-bold">HOT</span>}
-                                    {service.isNew && <span className="text-[9px] bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded-md font-bold">NOVO</span>}
+                                    <div className="flex flex-col">
+                                        <div className="flex items-center gap-1.5">
+                                            <span className="font-bold text-slate-700 text-sm group-hover:text-slate-900">{service.name}</span>
+                                            {service.isHot && <span className="text-[9px] bg-red-100 text-red-600 px-1.5 py-0.5 rounded-md font-bold">HOT</span>}
+                                            {service.isNew && <span className="text-[9px] bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded-md font-bold">NOVO</span>}
+                                        </div>
+                                        <p className="text-[10px] text-slate-400 font-medium">
+                                            Disponível: <span className="font-bold text-slate-600">{service.stock || 0}</span>
+                                        </p>
+                                    </div>
                                 </div>
-                                <span className="font-extrabold text-slate-700 text-sm bg-slate-100 px-2 py-1 rounded-lg group-hover:bg-white group-hover:shadow-sm transition-all">R$ {service.price.toFixed(2)}</span>
+                                
+                                <div className="flex flex-col items-end gap-1">
+                                    <span className="font-bold text-blue-600 text-xs">R$ {service.price.toFixed(2)}</span>
+                                    
+                                    <button 
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            if(service.id === 'specific') {
+                                                // If "Outros Apps" is clicked, filter the list to 'other'
+                                                setSelectedCategory('other');
+                                            } else {
+                                                onPurchase(service);
+                                            }
+                                        }}
+                                        className="relative overflow-hidden bg-blue-600 text-white text-[10px] font-bold px-3 py-1.5 rounded-lg shadow-sm shadow-blue-200 hover:bg-blue-700 transition-all active:scale-95 uppercase tracking-wide group-btn"
+                                    >
+                                        <span className="relative z-10">{service.id === 'specific' ? 'Ver Todos' : 'Comprar'}</span>
+                                        {/* Shimmer Overlay */}
+                                        <div className="absolute inset-0 -translate-x-full animate-shimmer bg-gradient-to-r from-transparent via-white/30 to-transparent z-0" />
+                                    </button>
+                                </div>
                             </div>
                         )) : (
                             <div className="p-4 text-center text-slate-400 text-xs font-medium">Nenhum serviço encontrado. Tente a opção "Específico".</div>
@@ -675,79 +722,7 @@ const HomeView = ({ user, setTab, transactions, currentBalance, activeNumbersCou
   );
 };
 
-const ServicesView = ({ onPurchase }: { onPurchase: (service: Service) => void }) => {
-    const [searchTerm, setSearchTerm] = useState('');
-    const [isLoading, setIsLoading] = useState(true);
-
-    useEffect(() => {
-        // Simulate loading
-        const timer = setTimeout(() => {
-            setIsLoading(false);
-        }, 1500);
-        return () => clearTimeout(timer);
-    }, []);
-
-    const filteredServices = useMemo(() => {
-        const term = searchTerm.toLowerCase();
-        return SERVICES.filter(s => s.name.toLowerCase().includes(term));
-    }, [searchTerm]);
-
-    return (
-    <div className="pb-28 space-y-4 pt-2">
-        <h2 className="text-xl font-bold text-slate-800 px-1 pt-2">Todos Serviços</h2>
-        <div className="bg-white p-3 rounded-2xl shadow-sm border border-slate-100 sticky top-20 z-30">
-             <div className="relative">
-                <Search className="absolute left-3.5 top-3 text-slate-400" size={18} />
-                <input 
-                    type="text" 
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    placeholder="Buscar serviço..." 
-                    className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-blue-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 bg-slate-50 transition-all text-sm font-medium text-slate-800"
-                />
-            </div>
-        </div>
-
-        <div className="grid gap-2.5">
-            {isLoading ? (
-                // Shimmer Effect Skeletons
-                Array(7).fill(0).map((_, i) => <ServiceCardSkeleton key={i} />)
-            ) : (
-                filteredServices.length > 0 ? (
-                    filteredServices.map(service => (
-                    <div key={service.id} className="bg-white p-3.5 rounded-2xl shadow-sm border border-slate-100 flex items-center justify-between active:scale-[0.99] transition-transform">
-                        <div className="flex items-center space-x-3.5">
-                            <ServiceIcon service={service} size="w-10 h-10" />
-                            <div>
-                                <div className="flex items-center gap-2">
-                                    <p className="font-bold text-slate-800 text-sm">{service.name}</p>
-                                    {service.isHot && <span className="text-[9px] bg-red-100 text-red-600 px-1.5 py-0.5 rounded font-bold">HOT</span>}
-                                </div>
-                                <p className="text-[11px] text-slate-400 font-medium">
-                                    Disponível: <span className="font-bold text-slate-600">{service.stock || 0}</span>
-                                </p>
-                            </div>
-                        </div>
-                        <div className="flex flex-col items-end gap-1">
-                            <p className="font-bold text-blue-600">R$ {service.price.toFixed(2)}</p>
-                            <button 
-                                onClick={() => onPurchase(service)}
-                                className="bg-blue-600 text-white text-[10px] px-3 py-1.5 rounded-lg font-bold shadow-md shadow-blue-200 active:bg-blue-700 uppercase tracking-wide"
-                            >
-                                Comprar
-                            </button>
-                        </div>
-                    </div>
-                ))) : (
-                    <div className="flex flex-col items-center justify-center py-12 text-slate-400">
-                        <Search size={32} className="mb-3 opacity-50"/>
-                        <p className="font-medium text-sm">Nenhum serviço encontrado</p>
-                    </div>
-                )
-            )}
-        </div>
-    </div>
-)};
+// ServicesView REMOVED
 
 const MyNumbersView = ({ transactions }: { transactions: Transaction[] }) => {
     // Estado local para controle do loading
@@ -897,8 +872,6 @@ const BalanceView = ({ onDeposit, currentBalance }: { onDeposit: (amount: number
                 setPixData({ payload: result.pixPayload, qrCode: result.pixQrCode });
                 setStep('payment');
                 setTimeLeft(120); 
-                // CRITICAL FIX: Removed onDeposit(amount) here. 
-                // Balance should only be added after confirmation/payment.
             } else {
                 setError(result.error || "Erro ao gerar PIX");
             }
@@ -956,7 +929,7 @@ const BalanceView = ({ onDeposit, currentBalance }: { onDeposit: (amount: number
                                 >
                                     <div className="flex items-baseline">
                                         <span className={`text-xs font-bold mr-0.5 ${amount === opt ? 'text-blue-100' : 'text-slate-400'}`}>R$</span>
-                                        <span className="text-xl font-extrabold tracking-tight">{opt}</span>
+                                        <span className="text-xl font-extrabold tracking-tight"></span>
                                         <span className={`text-xs font-bold ${amount === opt ? 'text-blue-100' : 'text-slate-400'}`}>,00</span>
                                     </div>
                                     {amount === opt && (
@@ -1067,26 +1040,26 @@ const FAQView = ({ onClose }: { onClose: () => void }) => {
     const faqs = [
         {
             id: 1,
-            question: "O que acontece se o SMS não chegar?",
-            answer: "Fique tranquilo! Nosso sistema é automático. Se o código SMS não chegar dentro do prazo (geralmente 20 minutos), o pedido é cancelado e o dinheiro volta para o seu saldo no aplicativo instantaneamente. Você não paga se não receber.",
-            icon: Wallet
+            question: "O que é o SMS Virtual BR?",
+            answer: "Somos uma plataforma automatizada que fornece números temporários para você receber códigos de verificação (SMS) de qualquer aplicativo ou site. Em vez de comprar um chip físico (SIM Card) novo na banca apenas para criar uma conta no WhatsApp, Telegram ou iFood, você aluga um número nosso por alguns minutos, recebe o código e ativa sua conta instantaneamente.",
+            icon: Smartphone
         },
         {
             id: 2,
-            question: "Quanto tempo dura o número?",
-            answer: "O número fica ativo e exclusivo para você por 20 minutos para receber o código de ativação. Após receber o código, o número é desativado. Use-o imediatamente após a compra.",
-            icon: Clock
+            question: "Por que os preços são tão baixos?",
+            answer: "Diferente das operadoras tradicionais que cobram por chips físicos, frete e planos mensais, nós trabalhamos com tecnologia em nuvem. Temos acesso direto a milhares de linhas virtuais. Como o uso é pontual (apenas para receber o código), conseguimos oferecer um custo extremamente baixo para o usuário final. Você paga apenas pelo que usa, sem mensalidades.",
+            icon: BadgeDollarSign
         },
         {
             id: 3,
-            question: "Aceita cartão de crédito?",
-            answer: "No momento, aceitamos apenas PIX. É o método mais rápido e seguro. O saldo cai na sua conta automaticamente assim que o pagamento é confirmado, 24 horas por dia.",
-            icon: CreditCard
+            question: "Como funciona na prática?",
+            answer: "O processo é 100% automático e leva menos de 1 minuto: \n1️⃣ Você adiciona saldo via PIX no bot/app.\n2️⃣ Escolhe o serviço desejado (ex: WhatsApp, Tinder, Shopee).\n3️⃣ O sistema gera um número exclusivo para você.\n4️⃣ Você digita esse número no app que quer ativar.\n5️⃣ O código de SMS chega na tela do nosso bot. Pronto!",
+            icon: Rocket
         },
         {
             id: 4,
-            question: "É seguro? Meus dados estão protegidos?",
-            answer: "Sim! Somos um app verificado. Todas as transações são processadas pela hoopay LTDA, garantindo segurança total. Seus dados são criptografados e não compartilhamos informações com terceiros.",
+            question: "É seguro? E o meu dinheiro?",
+            answer: "Sua segurança é nossa prioridade. O sistema funciona com Garantia de Entrega: O valor do serviço só é descontado do seu saldo se o SMS realmente chegar. Se o código não chegar dentro do tempo limite (geralmente 20 minutos), o sistema cancela a operação e o dinheiro retorna automaticamente para o seu saldo no app. Você nunca perde dinheiro por um serviço que não funcionou.",
             icon: ShieldCheck
         }
     ];
@@ -1112,7 +1085,12 @@ const FAQView = ({ onClose }: { onClose: () => void }) => {
 
             {/* Content */}
             <div className="flex-1 overflow-y-auto p-5 pb-12">
-                {/* REMOVED: Blue Header Banner as requested */}
+                <div className="text-center mb-6 space-y-2">
+                    <h3 className="text-xl font-extrabold text-slate-800">👋 OLÁ! BEM-VINDO</h3>
+                    <p className="text-sm text-slate-500 leading-relaxed max-w-xs mx-auto">
+                        Aqui explicamos tudo o que você precisa saber para gerar seus números virtuais com total agilidade e garantia.
+                    </p>
+                </div>
 
                 <div className="space-y-3">
                     {faqs.map((item) => (
@@ -1138,7 +1116,7 @@ const FAQView = ({ onClose }: { onClose: () => void }) => {
                             {openQuestion === item.id && (
                                 <div className="px-4 pb-4 pt-0 animate-fadeIn">
                                     <div className="pl-11 pr-2">
-                                        <p className="text-xs leading-relaxed text-slate-500 bg-slate-50 p-3 rounded-lg border border-slate-100">
+                                        <p className="text-xs leading-relaxed text-slate-500 bg-slate-50 p-3 rounded-lg border border-slate-100 whitespace-pre-line">
                                             {item.answer}
                                         </p>
                                     </div>
@@ -1148,11 +1126,15 @@ const FAQView = ({ onClose }: { onClose: () => void }) => {
                     ))}
                 </div>
 
-                <div className="mt-8 text-center">
-                    <p className="text-slate-400 text-xs font-medium mb-4">Não encontrou o que procurava?</p>
-                    {/* Note: This assumes onClose will take user back to Profile where they can click Support */}
-                    <button onClick={onClose} className="text-blue-600 font-bold text-sm bg-blue-50 px-6 py-3 rounded-xl hover:bg-blue-100 transition-colors active:scale-95">
-                        Voltar
+                <div className="mt-8 text-center bg-blue-50 p-4 rounded-2xl border border-blue-100">
+                    <p className="text-blue-800 text-xs font-bold mb-3 flex items-center justify-center gap-2">
+                        <MessageSquareText size={14}/> Ainda tem alguma dúvida?
+                    </p>
+                    <p className="text-blue-600/80 text-[10px] mb-4">
+                        Nossa equipe está pronta para te ajudar. Se algo não ficou claro ou teve algum problema técnico, clique abaixo.
+                    </p>
+                    <button onClick={onClose} className="text-white font-bold text-xs bg-blue-600 px-6 py-2.5 rounded-lg hover:bg-blue-700 transition-colors active:scale-95 shadow-lg shadow-blue-200">
+                        Voltar ao Menu
                     </button>
                 </div>
             </div>
@@ -1171,110 +1153,75 @@ const TermsView = ({ onClose }: { onClose: () => void }) => {
                      <div className="w-8 h-8 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center">
                         <FileText size={18} />
                      </div>
-                     <h2 className="font-bold text-slate-800 text-lg">Termos e Condições</h2>
+                     <h2 className="font-bold text-slate-800 text-lg">Termos de Uso</h2>
                 </div>
             </div>
             
-            <div className="flex-1 overflow-y-auto p-5 space-y-8 text-sm text-slate-600 pb-12">
+            <div className="flex-1 overflow-y-auto p-5 space-y-6 text-sm text-slate-600 pb-12">
                 
                 {/* 1. Header & Verification */}
-                <div className="text-center space-y-2 mb-2">
+                <div className="text-center space-y-2 mb-4">
                     <h3 className="font-extrabold text-slate-800 text-xl">𝗦𝗠𝗦 𝗩𝗜𝗥𝗧𝗨𝗔𝗟 𝗕𝗥</h3>
-                    <div className="inline-flex items-center gap-1.5 bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-xs font-bold border border-blue-100">
-                        <CheckCircle2 size={12} strokeWidth={3} />
-                        Mini App Verificado Telegram
+                    <div className="inline-flex items-center gap-1.5 bg-green-50 text-green-700 px-3 py-1 rounded-full text-xs font-bold border border-green-100">
+                        <ShieldCheck size={12} strokeWidth={3} />
+                        Plataforma Segura e Verificada
                     </div>
                 </div>
 
-                {/* 2. Sobre Nós */}
-                <section className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
-                    <h3 className="text-slate-900 font-bold text-base mb-3 flex items-center gap-2">
-                        <Info size={20} className="text-blue-600"/> 1. Sobre Nós
-                    </h3>
-                    <p className="leading-relaxed text-slate-500 mb-2">
-                        O <strong>𝗦𝗠𝗦 𝗩𝗜𝗥𝗧𝗨𝗔𝗟 𝗕𝗥</strong> é uma plataforma automatizada que fornece números virtuais temporários para recebimento de SMS. 
-                    </p>
-                    <p className="leading-relaxed text-slate-500">
-                        Nossa missão é oferecer privacidade e segurança para usuários que desejam se cadastrar em aplicativos, sites e redes sociais sem expor seu número de telefone pessoal.
-                    </p>
-                </section>
-
-                {/* 3. Reembolsos (CRITICAL) */}
-                <section className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
-                    <h3 className="text-slate-900 font-bold text-base mb-3 flex items-center gap-2">
-                        <Banknote size={20} className="text-green-600"/> 2. Política de Reembolso
-                    </h3>
+                {/* 2. Regra de Ouro (CRITICAL) */}
+                 <section className="bg-amber-50 p-5 rounded-2xl border border-amber-100 relative overflow-hidden">
+                    <div className="absolute -right-6 -top-6 bg-amber-100 w-24 h-24 rounded-full opacity-50"></div>
                     
-                    <div className="space-y-4">
-                        <div className="bg-green-50 p-3 rounded-xl border border-green-100">
-                            <h4 className="font-bold text-green-800 text-xs uppercase mb-1">Reembolso Automático</h4>
-                            <p className="text-xs text-green-700 leading-relaxed">
-                                Se você comprar um número e o código SMS não chegar dentro do tempo limite (geralmente 20 minutos), o pedido é cancelado e o valor <strong>retorna automaticamente</strong> para seu saldo no app. Você não perde dinheiro.
-                            </p>
-                        </div>
-
-                        <div className="bg-blue-50 p-3 rounded-xl border border-blue-100">
-                            <h4 className="font-bold text-blue-800 text-xs uppercase mb-1">Saque Bancário (Estorno)</h4>
-                            <p className="text-xs text-blue-700 leading-relaxed">
-                                Entendemos que imprevistos acontecem. Se o serviço não funcionar para você e desejar seu dinheiro de volta na conta bancária:
-                            </p>
-                            <p className="text-xs text-blue-700 font-bold mt-2">
-                                ✅ Sim, fazemos o reembolso via PIX para sua conta bancária.
-                            </p>
-                            <p className="text-xs text-blue-700 mt-1">
-                                Basta entrar em contato com nosso Suporte e solicitar o estorno do valor recarregado que não foi utilizado.
-                            </p>
-                        </div>
-                    </div>
-                </section>
-
-                 {/* 4. Alerta de Golpes (CRITICAL) */}
-                 <section className="bg-red-50 p-5 rounded-2xl border border-red-100 relative overflow-hidden">
-                    <div className="absolute -right-6 -top-6 bg-red-100 w-24 h-24 rounded-full opacity-50"></div>
-                    
-                    <h3 className="text-red-700 font-bold text-base mb-3 flex items-center gap-2 relative z-10">
-                        <ShieldAlert size={20}/> 3. Alerta de Golpes
+                    <h3 className="text-amber-800 font-bold text-base mb-3 flex items-center gap-2 relative z-10">
+                        <AlertCircle size={20}/> Regra de Ouro
                     </h3>
                     
                     <div className="space-y-3 relative z-10">
-                        <p className="leading-relaxed text-red-800 text-xs font-bold">
-                            ⚠️ ATENÇÃO: NÃO CAIA EM GOLPES!
+                        <p className="leading-relaxed text-amber-900 text-xs font-bold">
+                            ⚠️ IMPORTANTE: Nossos números são TEMPORÁRIOS e DESCARTÁVEIS.
                         </p>
-                        <p className="leading-relaxed text-red-700/90 text-xs">
-                            O 𝗦𝗠𝗦 𝗩𝗜𝗥𝗧𝗨𝗔𝗟 𝗕𝗥 vende apenas o número para receber o código. <strong>Não temos vínculo com as plataformas</strong> (WhatsApp, Telegram, etc).
+                        <p className="leading-relaxed text-amber-800/90 text-xs">
+                           Isso significa que você usa o número para ativar a conta (receber o código) e depois ele é desativado.
                         </p>
-                        <ul className="list-disc pl-4 text-xs text-red-700/90 space-y-1">
-                            <li>Não confie em promessas de "dinheiro fácil", "renda extra garantida" ou "tarefas pagas" que exigem criar contas.</li>
-                            <li>Nunca compartilhe códigos de verificação com estranhos.</li>
-                            <li>Se alguém pediu para você comprar um número aqui para "validar" algo e ganhar dinheiro, <strong>é provável que seja um golpe</strong>.</li>
-                        </ul>
+                        <p className="leading-relaxed text-amber-800/90 text-xs font-medium bg-white/50 p-2 rounded-lg border border-amber-200/50">
+                           🚫 <strong>NÃO USE</strong> para serviços que exigem recuperação constante (como bancos, gov-br ou senhas importantes). Se você perder a senha da conta criada, não será possível receber outro SMS no mesmo número no futuro.
+                        </p>
                     </div>
                 </section>
 
-                {/* 5. Responsabilidades */}
+                {/* 3. Privacidade */}
                 <section className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
                     <h3 className="text-slate-900 font-bold text-base mb-3 flex items-center gap-2">
-                        <Lock size={20} className="text-slate-600"/> 4. Termos de Uso
+                        <Lock size={20} className="text-blue-600"/> Privacidade e Anonimato
                     </h3>
                     <p className="text-xs leading-relaxed text-slate-500 mb-2">
-                        Ao utilizar o 𝗦𝗠𝗦 𝗩𝗜𝗥𝗧𝗨𝗔𝗟 𝗕𝗥, você concorda que:
+                        Ao usar nossos números, você protege seu número pessoal real contra spams, listas de marketing e vazamento de dados. 
                     </p>
-                    <ul className="space-y-2">
-                        <li className="flex gap-2 text-xs text-slate-500">
-                            <span className="text-slate-300">•</span>
-                            Os números são temporários e descartáveis. Não devem ser usados para contas bancárias pessoais ou serviços que exijam recuperação futura.
+                    <p className="text-xs leading-relaxed text-slate-500">
+                        Não exigimos seus documentos pessoais para gerar um número virtual, garantindo total privacidade na criação das suas contas secundárias.
+                    </p>
+                </section>
+
+                {/* 4. Segurança e Reembolso */}
+                <section className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
+                    <h3 className="text-slate-900 font-bold text-base mb-3 flex items-center gap-2">
+                        <ShieldCheck size={20} className="text-green-600"/> É Seguro?
+                    </h3>
+                    <p className="text-xs leading-relaxed text-slate-500 mb-2">
+                        Sua segurança é nossa prioridade. O sistema funciona com Garantia de Entrega:
+                    </p>
+                    <ul className="space-y-2 mt-2">
+                        <li className="flex gap-2 text-xs text-slate-500 bg-slate-50 p-2 rounded-lg">
+                            <span className="text-green-500 font-bold">✓</span>
+                            O valor do serviço só é descontado do seu saldo se o SMS realmente chegar.
                         </li>
-                        <li className="flex gap-2 text-xs text-slate-500">
-                            <span className="text-slate-300">•</span>
-                            É estritamente proibido usar nossos serviços para atividades ilegais, fraudes, assédio ou spam. Contas identificadas com tais práticas serão banidas.
-                        </li>
-                        <li className="flex gap-2 text-xs text-slate-500">
-                            <span className="text-slate-300">•</span>
-                            O serviço é fornecido "como está". Embora tenhamos alta taxa de sucesso, não garantimos 100% de entrega de SMS devido a filtros das operadoras.
+                        <li className="flex gap-2 text-xs text-slate-500 bg-slate-50 p-2 rounded-lg">
+                            <span className="text-green-500 font-bold">✓</span>
+                            Se o código não chegar dentro do tempo limite (20 min), o sistema cancela a operação e o dinheiro retorna automaticamente para o seu saldo.
                         </li>
                     </ul>
                 </section>
-                
+
                 <div className="pt-4 pb-4 text-center">
                     <p className="text-[10px] text-slate-400 font-medium">
                         Atualizado em Março de 2025<br/>
@@ -1328,7 +1275,7 @@ const ProfileView = ({ user, onOpenSupport, onOpenTerms, onOpenFAQ }: { user: Te
                             <HelpCircle size={20} />
                         </div>
                         <div className="flex flex-col items-start">
-                            <span className="font-bold text-slate-700 text-sm">Perguntas Frequentes</span>
+                            <span className="font-bold text-slate-700 text-sm">Central de Ajuda</span>
                             <span className="text-[10px] text-slate-400 font-medium">Tire suas dúvidas aqui</span>
                         </div>
                     </div>
@@ -1449,7 +1396,7 @@ export const App: React.FC = () => {
 
   const handleSupportClick = () => {
     const supportUrl = "https://t.me/SMSVirtualBR_suporte";
-    // Check if running inside Telegram
+    // Check if is running inside Telegram
     // @ts-ignore
     if (window.Telegram?.WebApp?.openTelegramLink) {
         // @ts-ignore
@@ -1515,9 +1462,7 @@ export const App: React.FC = () => {
 
       switch (activeTab) {
           case 'home':
-              return <HomeView user={user} setTab={setActiveTab} transactions={transactions} currentBalance={balance} activeNumbersCount={activeNumbersCount} />;
-          case 'services':
-              return <ServicesView onPurchase={handlePurchase} />;
+              return <HomeView user={user} setTab={setActiveTab} transactions={transactions} currentBalance={balance} activeNumbersCount={activeNumbersCount} onPurchase={handlePurchase} />;
           case 'mynumbers':
               return <MyNumbersView transactions={transactions} />;
           case 'orders':
@@ -1527,14 +1472,14 @@ export const App: React.FC = () => {
           case 'balance':
               return <BalanceView onDeposit={handleDeposit} currentBalance={balance} />;
           default:
-              return <HomeView user={user} setTab={setActiveTab} transactions={transactions} currentBalance={balance} activeNumbersCount={activeNumbersCount} />;
+              return <HomeView user={user} setTab={setActiveTab} transactions={transactions} currentBalance={balance} activeNumbersCount={activeNumbersCount} onPurchase={handlePurchase} />;
       }
   };
 
   // Determine if header should be shown
-  // Visible on: Home, Services, MyNumbers, Orders
+  // Visible on: Home, MyNumbers, Orders (Services removed)
   // Hidden on: Profile, Balance, Support/Terms/FAQ Modals
-  const showHeader = ['home', 'services', 'mynumbers', 'orders'].includes(activeTab) && !showTerms && !showFAQ;
+  const showHeader = ['home', 'mynumbers', 'orders'].includes(activeTab) && !showTerms && !showFAQ;
 
   return (
     <div className="min-h-screen bg-[#f8fafc] font-sans text-slate-900 selection:bg-blue-100 pb-safe">
