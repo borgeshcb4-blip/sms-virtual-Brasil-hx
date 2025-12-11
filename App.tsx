@@ -305,28 +305,28 @@ const TIME_VARIATIONS = [
 const ServiceListSkeleton = () => (
     <div className="flex items-center justify-between p-3 rounded-xl mb-1 border border-transparent">
         <div className="flex items-center space-x-3 w-full">
-            <div className="w-9 h-9 rounded-full bg-slate-200 animate-pulse shrink-0" />
+            <div className="w-9 h-9 rounded-full bg-blue-50 animate-pulse shrink-0" />
             <div className="space-y-2 flex-1">
-                <div className="h-3 bg-slate-200 rounded w-24 animate-pulse" />
-                <div className="h-2 bg-slate-100 rounded w-16 animate-pulse" />
+                <div className="h-3 bg-blue-50 rounded w-24 animate-pulse" />
+                <div className="h-2 bg-blue-50 rounded w-16 animate-pulse" />
             </div>
         </div>
-        <div className="h-6 bg-slate-200 rounded-lg w-16 animate-pulse" />
+        <div className="h-6 bg-blue-50 rounded-lg w-16 animate-pulse" />
     </div>
 );
 
 const ServiceCardSkeleton = () => (
-    <div className="bg-white p-3.5 rounded-2xl shadow-sm border border-slate-100 flex items-center justify-between">
+    <div className="bg-white p-3.5 rounded-2xl shadow-sm border border-blue-100 flex items-center justify-between">
         <div className="flex items-center space-x-3.5 w-full">
-            <div className="w-10 h-10 rounded-full bg-slate-200 animate-pulse shrink-0" />
+            <div className="w-10 h-10 rounded-full bg-blue-50 animate-pulse shrink-0" />
             <div className="space-y-2 flex-1">
-                <div className="h-3 bg-slate-200 rounded w-24 animate-pulse" />
-                <div className="h-2 bg-slate-100 rounded w-20 animate-pulse" />
+                <div className="h-3 bg-blue-50 rounded w-24 animate-pulse" />
+                <div className="h-2 bg-blue-50 rounded w-20 animate-pulse" />
             </div>
         </div>
         <div className="flex flex-col items-end gap-2">
-            <div className="h-3 bg-slate-200 rounded w-12 animate-pulse" />
-            <div className="h-6 bg-slate-200 rounded w-16 animate-pulse" />
+            <div className="h-3 bg-blue-50 rounded w-12 animate-pulse" />
+            <div className="h-6 bg-blue-50 rounded w-16 animate-pulse" />
         </div>
     </div>
 );
@@ -339,7 +339,7 @@ const ServiceIcon = ({ service, size = "w-9 h-9", rounded = "rounded-full" }: { 
 
     if (service.logoUrl && !imgError) {
         return (
-            <div className={`${size} ${rounded} bg-white flex items-center justify-center shadow-sm border border-slate-100 p-0.5 overflow-hidden shrink-0`}>
+            <div className={`${size} ${rounded} bg-white flex items-center justify-center shadow-sm border border-blue-100 p-0.5 overflow-hidden shrink-0`}>
                 <img 
                     src={service.logoUrl} 
                     alt={service.name} 
@@ -427,14 +427,14 @@ const SocialProofWidget = () => {
 
     return (
         <div className={`fixed bottom-24 left-0 right-0 z-40 flex justify-center pointer-events-none transition-all duration-700 transform ${visible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
-            <div className="bg-white/95 backdrop-blur-md px-3.5 py-2.5 rounded-full shadow-xl border border-slate-100 flex items-center gap-3 max-w-[95%] mx-4">
+            <div className="bg-white/95 backdrop-blur-md px-3.5 py-2.5 rounded-full shadow-xl border border-blue-100 flex items-center gap-3 max-w-[95%] mx-4">
                  <ServiceIcon service={data.service} size="w-7 h-7" />
                  <div className="flex flex-col">
-                     <p className="text-[11px] text-slate-800 leading-tight">
+                     <p className="text-[11px] text-blue-900 leading-tight">
                         <span className="font-bold">{data.name}</span> ({data.state}) ativou <span className="font-bold text-blue-600">{data.service.name}</span>
                      </p>
                  </div>
-                 <div className="flex items-center gap-1 pl-2 border-l border-slate-200 ml-1">
+                 <div className="flex items-center gap-1 pl-2 border-l border-blue-200 ml-1">
                      {data.isLive ? (
                          <>
                             <div className="relative flex h-2 w-2">
@@ -465,14 +465,14 @@ const BottomNav = ({ activeTab, setTab }: { activeTab: string, setTab: (t: strin
   if (activeTab === 'support' || activeTab === 'terms' || activeTab === 'faq') return null; // Hide nav when in sub-pages
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-100 pb-safe pt-2 px-4 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-50">
+    <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-blue-100 pb-safe pt-2 px-4 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-50">
       <div className="flex justify-between items-center max-w-md mx-auto">
         {navItems.map((item) => (
           <button
             key={item.id}
             onClick={() => setTab(item.id)}
             className={`flex flex-col items-center justify-center w-full py-1 space-y-1.5 transition-colors ${
-              activeTab === item.id ? 'text-blue-600' : 'text-slate-400 hover:text-slate-600'
+              activeTab === item.id ? 'text-blue-600' : 'text-slate-400 hover:text-blue-500'
             }`}
           >
             <item.icon size={22} strokeWidth={activeTab === item.id ? 2.5 : 2} />
@@ -518,7 +518,7 @@ const AppHeader: React.FC<AppHeaderProps> = ({
         <div className="sticky top-0 z-50 bg-white/95 backdrop-blur-md py-3 px-4 flex items-center gap-3 border-b border-transparent transition-colors duration-200">
              {/* 1. Home Button */}
              <button
-                className={`w-10 h-10 bg-white rounded-xl shadow-sm border border-slate-100 flex items-center justify-center active:scale-95 transition-transform shrink-0 ${activeTab === 'home' ? 'text-blue-600' : 'text-slate-700'}`}
+                className={`w-10 h-10 bg-white rounded-xl shadow-sm border border-blue-100 flex items-center justify-center active:scale-95 transition-transform shrink-0 ${activeTab === 'home' ? 'text-blue-600' : 'text-slate-700'}`}
                 onClick={handleHomeClick}
              >
                 <Home size={20} strokeWidth={2.5} />
@@ -538,7 +538,7 @@ const AppHeader: React.FC<AppHeaderProps> = ({
              {/* 3. Notification Button */}
              <button
                 onClick={handleBellClick}
-                className="w-10 h-10 bg-white rounded-xl shadow-sm border border-slate-100 flex items-center justify-center text-slate-500 relative active:scale-95 transition-transform shrink-0"
+                className="w-10 h-10 bg-white rounded-xl shadow-sm border border-blue-100 flex items-center justify-center text-slate-500 relative active:scale-95 transition-transform shrink-0"
              >
                 <Bell size={20} className="fill-slate-500 text-slate-500" />
                  {hasUnreadNotification && (
@@ -549,7 +549,7 @@ const AppHeader: React.FC<AppHeaderProps> = ({
              {/* 4. Profile Button */}
              <button
                 onClick={() => setTab('profile')}
-                className={`w-10 h-10 bg-white rounded-full shadow-sm border border-slate-100 flex items-center justify-center overflow-hidden active:scale-95 transition-transform shrink-0 ${activeTab === 'profile' ? 'ring-2 ring-blue-600' : ''}`}
+                className={`w-10 h-10 bg-white rounded-full shadow-sm border border-blue-100 flex items-center justify-center overflow-hidden active:scale-95 transition-transform shrink-0 ${activeTab === 'profile' ? 'ring-2 ring-blue-600' : ''}`}
              >
                  {photoUrl ? (
                     <img src={photoUrl} alt="Profile" className="w-full h-full object-cover" />
@@ -601,18 +601,18 @@ const HomeView = ({ user, setTab, transactions, currentBalance, activeNumbersCou
 
       {/* STATS GRID */}
       <div className="grid grid-cols-2 gap-4 px-1 pt-2">
-         <div className="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 flex flex-col items-center justify-center text-center gap-1 active:scale-[0.98] transition-transform cursor-default">
+         <div className="bg-white p-4 rounded-2xl shadow-sm border border-blue-100 flex flex-col items-center justify-center text-center gap-1 active:scale-[0.98] transition-transform cursor-default">
              <div className="w-10 h-10 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center mb-1">
                  <Smartphone size={22} strokeWidth={2.5} />
              </div>
-             <span className="text-2xl font-extrabold text-slate-800 block">{activeNumbersCount}</span>
+             <span className="text-2xl font-extrabold text-blue-950 block">{activeNumbersCount}</span>
              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">Números Ativos</span>
          </div>
-         <div className="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 flex flex-col items-center justify-center text-center gap-1 active:scale-[0.98] transition-transform cursor-default">
+         <div className="bg-white p-4 rounded-2xl shadow-sm border border-blue-100 flex flex-col items-center justify-center text-center gap-1 active:scale-[0.98] transition-transform cursor-default">
              <div className="w-10 h-10 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center mb-1">
                  <MessageSquare size={22} strokeWidth={2.5} />
              </div>
-             <span className="text-2xl font-extrabold text-slate-800 block">0</span>
+             <span className="text-2xl font-extrabold text-blue-950 block">0</span>
              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">SMS</span>
          </div>
       </div>
@@ -620,25 +620,25 @@ const HomeView = ({ user, setTab, transactions, currentBalance, activeNumbersCou
       {/* ALERT / CTA REMOVED */}
 
       {/* SERVICE SELECTOR SECTION */}
-      <div id="service-selector" className="bg-white p-5 rounded-3xl shadow-sm border border-slate-100 space-y-5 mx-1">
-        <h3 className="font-bold text-slate-800 text-sm flex items-center gap-2">
+      <div id="service-selector" className="bg-white p-5 rounded-3xl shadow-sm border border-blue-100 space-y-5 mx-1">
+        <h3 className="font-bold text-blue-950 text-sm flex items-center gap-2">
             <ShoppingCart size={16} className="text-blue-500"/> Nova Ativação
         </h3>
         <div className="space-y-2">
             <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block ml-1">País</label>
-            <div className="w-full flex items-center justify-between p-3.5 border border-slate-200 rounded-xl bg-slate-50 cursor-default">
+            <div className="w-full flex items-center justify-between p-3.5 border border-blue-200 rounded-xl bg-blue-50/50 cursor-default">
                 <div className="flex items-center space-x-3">
                     <span className="text-2xl drop-shadow-sm leading-none">🇧🇷</span>
                     <span className="font-bold text-slate-700 text-sm">BRASIL (BR)</span>
                 </div>
-                <span className="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded-md">
+                <span className="text-[10px] font-bold text-blue-600 bg-blue-100 px-2 py-1 rounded-md">
                     Disponível
                 </span>
             </div>
         </div>
         <div className="space-y-2">
             <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block ml-1">Serviço</label>
-            <div className="border border-slate-200 rounded-xl overflow-hidden p-1 bg-white">
+            <div className="border border-blue-200 rounded-xl overflow-hidden p-1 bg-white">
                 <div className="flex gap-2 p-2 overflow-x-auto no-scrollbar mb-1">
                     {categories.map((cat) => (
                         <button
@@ -647,7 +647,7 @@ const HomeView = ({ user, setTab, transactions, currentBalance, activeNumbersCou
                             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-colors border ${
                                 selectedCategory === cat.id 
                                 ? 'bg-blue-600 text-white border-blue-600 shadow-sm' 
-                                : 'bg-slate-50 text-slate-500 border-slate-100 hover:bg-slate-100'
+                                : 'bg-slate-50 text-slate-500 border-blue-100 hover:bg-slate-100'
                             }`}
                         >
                             <cat.icon size={14} /> {cat.label}
@@ -670,12 +670,12 @@ const HomeView = ({ user, setTab, transactions, currentBalance, activeNumbersCou
                         Array(5).fill(0).map((_, i) => <ServiceListSkeleton key={i} />)
                     ) : (
                         filteredServices.length > 0 ? filteredServices.map(service => (
-                            <div key={service.id} className={`flex items-center justify-between p-3 hover:bg-slate-50 rounded-xl cursor-pointer transition-colors group border ${service.id === 'specific' ? 'bg-slate-50 border-blue-100' : 'border-transparent hover:border-slate-100'}`}>
+                            <div key={service.id} className={`flex items-center justify-between p-3 hover:bg-slate-50 rounded-xl cursor-pointer transition-colors group border ${service.id === 'specific' ? 'bg-blue-50 border-blue-100' : 'border-transparent hover:border-blue-100'}`}>
                                 <div className="flex items-center space-x-3">
                                     <ServiceIcon service={service} />
                                     <div className="flex flex-col">
                                         <div className="flex items-center gap-1.5">
-                                            <span className="font-bold text-slate-700 text-sm group-hover:text-slate-900">{service.name}</span>
+                                            <span className="font-bold text-slate-700 text-sm group-hover:text-blue-950">{service.name}</span>
                                             {service.isHot && <span className="text-[9px] bg-red-100 text-red-600 px-1.5 py-0.5 rounded-md font-bold">HOT</span>}
                                             {service.isNew && <span className="text-[9px] bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded-md font-bold">NOVO</span>}
                                         </div>
@@ -733,8 +733,8 @@ const MyNumbersView = ({ transactions }: { transactions: Transaction[] }) => {
 
     return (
         <div className="pb-28 space-y-4 pt-4">
-            <h2 className="text-xl font-bold text-slate-800 px-1">Meus Números</h2>
-            <div className="bg-white p-5 rounded-[2rem] shadow-sm border border-slate-100 min-h-[60vh] flex flex-col">
+            <h2 className="text-xl font-bold text-blue-950 px-1">Meus Números</h2>
+            <div className="bg-white p-5 rounded-[2rem] shadow-sm border border-blue-100 min-h-[60vh] flex flex-col">
                  {isLoading ? (
                      <div className="flex-1 flex flex-col items-center justify-center gap-4">
                          <Loader2 className="w-10 h-10 text-blue-600 animate-spin" />
@@ -744,12 +744,12 @@ const MyNumbersView = ({ transactions }: { transactions: Transaction[] }) => {
                      activeNumbers.length > 0 ? (
                         <div className="space-y-3 animate-fadeIn">
                             {activeNumbers.map(num => (
-                                 <div key={num.id} className="p-4 bg-slate-50 rounded-xl border border-slate-100 flex items-center gap-4">
+                                 <div key={num.id} className="p-4 bg-blue-50 rounded-xl border border-blue-100 flex items-center gap-4">
                                     <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-blue-600 shadow-sm">
                                         <Smartphone size={20} />
                                     </div>
                                     <div>
-                                        <p className="font-bold text-slate-800 text-sm">{num.description}</p>
+                                        <p className="font-bold text-blue-950 text-sm">{num.description}</p>
                                         <p className="text-[10px] text-slate-400">Aguardando SMS...</p>
                                     </div>
                                  </div>
@@ -757,7 +757,7 @@ const MyNumbersView = ({ transactions }: { transactions: Transaction[] }) => {
                         </div>
                      ) : (
                         <div className="flex-1 flex flex-col items-center justify-center text-center p-6 animate-fadeIn">
-                             <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center text-slate-300 mb-4">
+                             <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center text-blue-300 mb-4">
                                  <Inbox size={32} />
                              </div>
                              <p className="text-slate-500 font-bold text-sm">Não há números ativos no momento</p>
@@ -781,8 +781,8 @@ const OrdersView = ({ transactions }: { transactions: Transaction[] }) => {
 
     return (
         <div className="pb-28 space-y-4 pt-4">
-             <h2 className="text-xl font-bold text-slate-800 px-1">Histórico de Pedidos</h2>
-             <div className="bg-white p-5 rounded-[2rem] shadow-sm border border-slate-100 min-h-[60vh] flex flex-col">
+             <h2 className="text-xl font-bold text-blue-950 px-1">Histórico de Pedidos</h2>
+             <div className="bg-white p-5 rounded-[2rem] shadow-sm border border-blue-100 min-h-[60vh] flex flex-col">
                 {isLoading ? (
                     <div className="flex-1 flex flex-col items-center justify-center gap-4">
                         <Loader2 className="w-10 h-10 text-blue-600 animate-spin" />
@@ -792,13 +792,13 @@ const OrdersView = ({ transactions }: { transactions: Transaction[] }) => {
                     transactions.length > 0 ? (
                         <div className="space-y-3 animate-fadeIn">
                             {transactions.map((t) => (
-                                <div key={t.id} className="p-4 bg-slate-50 rounded-xl border border-slate-100 flex items-center justify-between">
+                                <div key={t.id} className="p-4 bg-blue-50/50 rounded-xl border border-blue-100 flex items-center justify-between">
                                     <div className="flex items-center gap-3">
                                         <div className={`w-10 h-10 rounded-full flex items-center justify-center ${t.type === 'deposit' ? 'bg-green-100 text-green-600' : 'bg-blue-100 text-blue-600'}`}>
                                             {t.type === 'deposit' ? <ArrowUpRight size={20}/> : <ShoppingCart size={20}/>}
                                         </div>
                                         <div>
-                                            <p className="font-bold text-slate-800 text-sm">{t.description}</p>
+                                            <p className="font-bold text-blue-950 text-sm">{t.description}</p>
                                             <p className="text-[10px] text-slate-400">{t.date}</p>
                                         </div>
                                     </div>
@@ -810,7 +810,7 @@ const OrdersView = ({ transactions }: { transactions: Transaction[] }) => {
                         </div>
                     ) : (
                          <div className="flex-1 flex flex-col items-center justify-center text-center p-6 animate-fadeIn">
-                             <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center text-slate-300 mb-4">
+                             <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center text-blue-300 mb-4">
                                  <ClipboardList size={32} />
                              </div>
                              <p className="text-slate-500 font-bold text-sm">Nenhum pedido realizado</p>
@@ -900,7 +900,7 @@ const BalanceView = ({ onDeposit, currentBalance }: { onDeposit: (amount: number
                     {/* Header: Saldo Atual (Top) */}
                     <div className="text-center py-2 mb-4">
                         <span className="text-slate-400 text-[10px] uppercase font-bold tracking-widest block mb-1">Saldo Atual</span>
-                        <h3 className="text-3xl font-extrabold text-slate-700">R$ {currentBalance.toFixed(2)}</h3>
+                        <h3 className="text-3xl font-extrabold text-blue-950">R$ {currentBalance.toFixed(2)}</h3>
                     </div>
 
                     {/* Main: Selector Grid */}
@@ -915,7 +915,7 @@ const BalanceView = ({ onDeposit, currentBalance }: { onDeposit: (amount: number
                                     className={`relative py-4 rounded-xl transition-all duration-200 border flex flex-col items-center justify-center gap-0.5 group ${
                                         amount === opt 
                                         ? 'bg-blue-600 border-blue-600 text-white shadow-lg shadow-blue-200/50 scale-[1.02]' 
-                                        : 'bg-white border-slate-100 text-slate-600 hover:border-blue-100 hover:bg-slate-50'
+                                        : 'bg-white border-blue-100 text-slate-600 hover:border-blue-200 hover:bg-blue-50'
                                     }`}
                                 >
                                     <div className="flex items-baseline">
@@ -959,24 +959,24 @@ const BalanceView = ({ onDeposit, currentBalance }: { onDeposit: (amount: number
                 pixData && (
                 <div className="px-1 animate-slideUp">
                     <div className="flex items-center gap-2 mb-6">
-                        <button onClick={() => setStep('amount')} className="p-2 -ml-2 text-slate-400 hover:text-slate-600 bg-white rounded-xl shadow-sm border border-slate-100"><ChevronLeft size={24} /></button>
-                        <h2 className="text-xl font-bold text-slate-800">Pagamento Pix</h2>
+                        <button onClick={() => setStep('amount')} className="p-2 -ml-2 text-slate-400 hover:text-slate-600 bg-white rounded-xl shadow-sm border border-blue-100"><ChevronLeft size={24} /></button>
+                        <h2 className="text-xl font-bold text-blue-950">Pagamento Pix</h2>
                     </div>
 
                     {/* TICKET / RECIPT CARD */}
-                    <div className="bg-white rounded-3xl shadow-xl shadow-slate-200/50 overflow-hidden relative border border-slate-100">
+                    <div className="bg-white rounded-3xl shadow-xl shadow-slate-200/50 overflow-hidden relative border border-blue-100">
                         {/* Top Section */}
-                        <div className="bg-slate-50 p-6 flex flex-col items-center border-b border-dashed border-slate-200">
+                        <div className="bg-blue-50 p-6 flex flex-col items-center border-b border-dashed border-blue-200">
                             <div className={`px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider mb-4 flex items-center gap-1.5 ${timeLeft < 30 ? 'bg-red-100 text-red-600 animate-pulse' : 'bg-blue-100 text-blue-600'}`}>
                                 <Timer size={12} /> Expira em {formatTime(timeLeft)}
                             </div>
                             <span className="text-slate-400 text-xs font-bold uppercase tracking-wider mb-1">Valor Total</span>
-                            <span className="text-4xl font-extrabold text-slate-800">R$ {amount.toFixed(2)}</span>
+                            <span className="text-4xl font-extrabold text-blue-950">R$ {amount.toFixed(2)}</span>
                         </div>
 
                         {/* QR Code Section */}
                         <div className="p-8 flex flex-col items-center">
-                             <div className="relative w-full aspect-square max-w-[240px] bg-white rounded-2xl flex items-center justify-center border-2 border-slate-100 p-2 shadow-inner">
+                             <div className="relative w-full aspect-square max-w-[240px] bg-white rounded-2xl flex items-center justify-center border-2 border-blue-100 p-2 shadow-inner">
                                 {timeLeft > 0 ? (
                                     <img src={`data:image/jpeg;base64,${pixData.qrCode}`} alt="QR Code Pix" className="w-full h-full object-contain mix-blend-multiply"/>
                                 ) : (
@@ -989,10 +989,10 @@ const BalanceView = ({ onDeposit, currentBalance }: { onDeposit: (amount: number
                         </div>
 
                         {/* Copy Paste Section */}
-                        <div className="bg-slate-50 p-6 border-t border-slate-100">
+                        <div className="bg-blue-50 p-6 border-t border-blue-100">
                              <p className="text-center text-slate-400 text-[10px] uppercase font-bold tracking-widest mb-3">Código Copia e Cola</p>
                              <div className="flex items-center gap-2">
-                                 <div className="bg-white border border-slate-200 text-slate-500 text-xs p-3 rounded-xl flex-1 font-mono truncate select-all">
+                                 <div className="bg-white border border-blue-200 text-slate-500 text-xs p-3 rounded-xl flex-1 font-mono truncate select-all">
                                      {pixData.payload}
                                  </div>
                                  <button 
@@ -1026,7 +1026,7 @@ const BalanceView = ({ onDeposit, currentBalance }: { onDeposit: (amount: number
     );
 };
 
-const FAQView = ({ onClose }: { onClose: () => void }) => {
+const FAQView = ({ onClose, onSupport }: { onClose: () => void, onSupport: () => void }) => {
     const [openQuestion, setOpenQuestion] = useState<number | null>(null);
 
     const faqs = [
@@ -1038,21 +1038,27 @@ const FAQView = ({ onClose }: { onClose: () => void }) => {
         },
         {
             id: 2,
-            question: "Por que os preços são tão baixos?",
-            answer: "Diferente das operadoras tradicionais que cobram por chips físicos, frete e planos mensais, nós trabalhamos com tecnologia em nuvem. Temos acesso direto a milhares de linhas virtuais. Como o uso é pontual (apenas para receber o código), conseguimos oferecer um custo extremamente baixo para o usuário final. Você paga apenas pelo que usa, sem mensalidades.",
-            icon: BadgeDollarSign
+            question: "É seguro usar este serviço?",
+            answer: "Sim! Nossos números são privados e dedicados a você durante o uso. Após o período de utilização, o número é descartado. Não compartilhamos seus dados ou o conteúdo das mensagens.",
+            icon: ShieldCheck
         },
         {
             id: 3,
-            question: "Como funciona na prática?",
-            answer: "O processo é 100% automático e leva menos de 1 minuto: \n1️⃣ Você adiciona saldo via PIX no bot/app.\n2️⃣ Escolhe o serviço desejado (ex: WhatsApp, Tinder, Shopee).\n3️⃣ O sistema gera um número exclusivo para você.\n4️⃣ Você digita esse número no app que quer ativar.\n5️⃣ O código de SMS chega na tela do nosso bot. Pronto!",
-            icon: Rocket
+            question: "E se eu não receber o código SMS?",
+            answer: "Caso não receba o SMS dentro do tempo estipulado, o valor não é cobrado. Você pode tentar com outro número ou para outro serviço sem custo adicional.",
+            icon: AlertCircle
         },
         {
             id: 4,
-            question: "É seguro? E o meu dinheiro?",
-            answer: "Sua segurança é nossa prioridade. O sistema funciona com Garantia de Entrega: O valor do serviço só é descontado do seu saldo se o código SMS for recebido com sucesso. Se o código não chegar dentro do tempo limite (geralmente 20 minutos), o sistema cancela a operação e o dinheiro retorna automaticamente para o seu saldo no app. Você nunca perde dinheiro por um serviço que não funcionou.",
-            icon: ShieldCheck
+            question: "Para quais aplicativos posso usar os números?",
+            answer: "Você pode usar para centenas de aplicativos e serviços, como WhatsApp, Telegram, Google, Uber, iFood, x, Kwai e muitos outros que exigem verificação por SMS.",
+            icon: LayoutGrid
+        },
+        {
+            id: 5,
+            question: "Como funciona na prática?",
+            answer: "O processo é 100% automático e leva menos de 1 minuto: \n1️⃣ Você adiciona saldo via PIX no bot/app.\n2️⃣ Escolhe o serviço desejado (ex: WhatsApp, Tinder, Shopee).\n3️⃣ O sistema gera um número exclusivo para você.\n4️⃣ Você digita esse número no app que quer ativar.\n5️⃣ O código de SMS chega na tela do nosso bot. Pronto!",
+            icon: Rocket
         }
     ];
 
@@ -1061,9 +1067,9 @@ const FAQView = ({ onClose }: { onClose: () => void }) => {
     };
 
     return (
-        <div className="fixed inset-0 bg-[#f8fafc] z-[60] flex flex-col h-[100vh]">
+        <div className="fixed inset-0 bg-[#eff6ff] z-[60] flex flex-col h-[100vh]">
             {/* Header */}
-            <div className="bg-white border-b border-slate-100 p-4 flex items-center gap-3 shadow-sm shrink-0">
+            <div className="bg-white border-b border-blue-100 p-4 flex items-center gap-3 shadow-sm shrink-0">
                 <button onClick={onClose} className="p-2 -ml-2 hover:bg-slate-50 rounded-full transition-colors text-slate-600">
                     <ChevronLeft size={24} />
                 </button>
@@ -1071,14 +1077,14 @@ const FAQView = ({ onClose }: { onClose: () => void }) => {
                      <div className="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center">
                         <HelpCircle size={18} />
                      </div>
-                     <h2 className="font-bold text-slate-800 text-lg">Central de Ajuda</h2>
+                     <h2 className="font-bold text-blue-950 text-lg">Central de Ajuda</h2>
                 </div>
             </div>
 
             {/* Content */}
             <div className="flex-1 overflow-y-auto p-5 pb-12">
                 <div className="text-center mb-6 space-y-2">
-                    <h3 className="text-xl font-extrabold text-slate-800">👋 OLÁ! BEM-VINDO</h3>
+                    <h3 className="text-xl font-extrabold text-blue-950">👋 OLÁ! BEM-VINDO</h3>
                     <p className="text-sm text-slate-500 leading-relaxed max-w-xs mx-auto">
                         Aqui explicamos tudo o que você precisa saber para gerar seus números virtuais com total agilidade e garantia.
                     </p>
@@ -1088,27 +1094,27 @@ const FAQView = ({ onClose }: { onClose: () => void }) => {
                     {faqs.map((item) => (
                         <div 
                             key={item.id} 
-                            className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden transition-all duration-300"
+                            className="bg-white rounded-xl shadow-sm border border-blue-100 overflow-hidden transition-all duration-300"
                         >
                             <button 
                                 onClick={() => toggleQuestion(item.id)}
-                                className="w-full p-4 flex items-center justify-between text-left hover:bg-slate-50 transition-colors"
+                                className="w-full p-4 flex items-center justify-between text-left hover:bg-blue-50 transition-colors"
                             >
                                 <div className="flex items-center gap-3">
-                                    <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${openQuestion === item.id ? 'bg-blue-100 text-blue-600' : 'bg-slate-100 text-slate-500'}`}>
+                                    <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${openQuestion === item.id ? 'bg-blue-100 text-blue-600' : 'bg-blue-50 text-blue-300'}`}>
                                         <item.icon size={16} />
                                     </div>
                                     <span className={`text-sm font-bold ${openQuestion === item.id ? 'text-blue-700' : 'text-slate-700'}`}>
                                         {item.question}
                                     </span>
                                 </div>
-                                {openQuestion === item.id ? <ChevronUp size={18} className="text-blue-500" /> : <ChevronDown size={18} className="text-slate-300" />}
+                                {openQuestion === item.id ? <ChevronUp size={18} className="text-blue-500" /> : <ChevronDown size={18} className="text-blue-200" />}
                             </button>
                             
                             {openQuestion === item.id && (
                                 <div className="px-4 pb-4 pt-0 animate-fadeIn">
                                     <div className="pl-11 pr-2">
-                                        <p className="text-xs leading-relaxed text-slate-500 bg-slate-50 p-3 rounded-lg border border-slate-100 whitespace-pre-line">
+                                        <p className="text-xs leading-relaxed text-slate-600 bg-blue-50 p-3 rounded-lg border border-blue-100 whitespace-pre-line">
                                             {item.answer}
                                         </p>
                                     </div>
@@ -1125,8 +1131,8 @@ const FAQView = ({ onClose }: { onClose: () => void }) => {
                     <p className="text-blue-600/80 text-[10px] mb-4">
                         Nossa equipe está pronta para te ajudar. Se algo não ficou claro ou teve algum problema técnico, clique abaixo.
                     </p>
-                    <button onClick={onClose} className="text-white font-bold text-xs bg-blue-600 px-6 py-2.5 rounded-lg hover:bg-blue-700 transition-colors active:scale-95 shadow-lg shadow-blue-200">
-                        Voltar ao Menu
+                    <button onClick={onSupport} className="text-white font-bold text-xs bg-blue-600 px-6 py-2.5 rounded-lg hover:bg-blue-700 transition-colors active:scale-95 shadow-lg shadow-blue-200 flex items-center justify-center gap-2 w-full max-w-[200px] mx-auto">
+                        <Headphones size={16} /> Falar com Suporte
                     </button>
                 </div>
             </div>
@@ -1137,18 +1143,18 @@ const FAQView = ({ onClose }: { onClose: () => void }) => {
 const TermsView = ({ onClose }: { onClose: () => void }) => {
     return (
         <div className="fixed inset-0 bg-white z-[60] flex flex-col h-[100vh]">
-            <div className="bg-white border-b border-gray-200 p-4 flex items-center gap-3 shrink-0">
+            <div className="bg-white border-b border-blue-100 p-4 flex items-center gap-3 shrink-0">
                 <button onClick={onClose} className="p-2 -ml-2 hover:bg-slate-50 rounded-full transition-colors text-black">
                     <ChevronLeft size={24} />
                 </button>
                 <div className="flex items-center gap-2">
-                     <h2 className="font-bold text-black text-lg">Termos de Uso</h2>
+                     <h2 className="font-bold text-blue-950 text-lg">Termos de Uso</h2>
                 </div>
             </div>
             
             <div className="flex-1 overflow-y-auto p-6 space-y-6 text-xs text-black leading-relaxed font-sans pb-12">
                 
-                <h1 className="text-lg font-bold uppercase mb-4 text-black">Termos e Condições Gerais de Uso</h1>
+                <h1 className="text-lg font-bold uppercase mb-4 text-blue-950">Termos e Condições Gerais de Uso</h1>
                 
                 <p>
                     Estes Termos e Condições Gerais aplicam-se ao uso dos serviços oferecidos pela SMS VIRTUAL BR, compreendendo o fornecimento de números virtuais temporários para recebimento de SMS.
@@ -1159,14 +1165,14 @@ const TermsView = ({ onClose }: { onClose: () => void }) => {
                 </p>
 
                 <section>
-                    <h3 className="font-bold uppercase mb-2 text-sm">1. Descrição do Serviço</h3>
+                    <h3 className="font-bold uppercase mb-2 text-sm text-blue-950">1. Descrição do Serviço</h3>
                     <p>
                         A SMS VIRTUAL BR fornece números de telefone temporários e descartáveis para fins de verificação de contas em serviços de terceiros (como WhatsApp, Telegram, Facebook, etc). Os números são alugados por um curto período de tempo (geralmente 20 minutos) exclusivamente para receber códigos de ativação via SMS.
                     </p>
                 </section>
 
                 <section>
-                    <h3 className="font-bold uppercase mb-2 text-sm">2. Natureza Temporária dos Números</h3>
+                    <h3 className="font-bold uppercase mb-2 text-sm text-blue-950">2. Natureza Temporária dos Números</h3>
                     <p>
                         O usuário reconhece e concorda que:
                         <br/>a) Os números fornecidos são temporários e não pertencem ao usuário.
@@ -1177,7 +1183,7 @@ const TermsView = ({ onClose }: { onClose: () => void }) => {
                 </section>
 
                 <section>
-                    <h3 className="font-bold uppercase mb-2 text-sm">3. Pagamentos e Reembolsos</h3>
+                    <h3 className="font-bold uppercase mb-2 text-sm text-blue-950">3. Pagamentos e Reembolsos</h3>
                     <p>
                         O sistema opera em regime pré-pago. O saldo deve ser adicionado previamente para utilização dos serviços.
                     </p>
@@ -1190,7 +1196,7 @@ const TermsView = ({ onClose }: { onClose: () => void }) => {
                 </section>
 
                 <section>
-                    <h3 className="font-bold uppercase mb-2 text-sm">4. Responsabilidades do Usuário</h3>
+                    <h3 className="font-bold uppercase mb-2 text-sm text-blue-950">4. Responsabilidades do Usuário</h3>
                     <p>
                         É estritamente proibido utilizar nossos serviços para:
                         <br/>- Atividades ilegais ou fraudulentas.
@@ -1203,21 +1209,21 @@ const TermsView = ({ onClose }: { onClose: () => void }) => {
                 </section>
 
                 <section>
-                    <h3 className="font-bold uppercase mb-2 text-sm">5. Limitação de Responsabilidade</h3>
+                    <h3 className="font-bold uppercase mb-2 text-sm text-blue-950">5. Limitação de Responsabilidade</h3>
                     <p>
                         Não nos responsabilizamos por perdas de contas, bloqueios ou banimentos em plataformas de terceiros (como WhatsApp ou Telegram). O uso de números virtuais pode violar os termos de serviço de alguns aplicativos, e o usuário assume esse risco.
                     </p>
                 </section>
 
                  <section>
-                    <h3 className="font-bold uppercase mb-2 text-sm">6. Privacidade</h3>
+                    <h3 className="font-bold uppercase mb-2 text-sm text-blue-950">6. Privacidade</h3>
                     <p>
                         Não coletamos dados pessoais identificáveis para o fornecimento de números. O serviço preza pelo anonimato e privacidade do usuário na ativação de contas.
                     </p>
                 </section>
 
-                <div className="pt-8 pb-4 text-center border-t border-gray-100 mt-8">
-                    <p className="text-[10px] text-black font-bold">
+                <div className="pt-8 pb-4 text-center border-t border-blue-100 mt-8">
+                    <p className="text-[10px] text-blue-950 font-bold">
                         SMS VIRTUAL BR © 2025
                     </p>
                 </div>
@@ -1233,7 +1239,7 @@ const ProfileView = ({ user, onOpenSupport, onOpenTerms, onOpenFAQ }: { user: Te
 
     return (
         <div className="pb-28 pt-4 px-4 space-y-6">
-            <h2 className="text-xl font-bold text-slate-800">Meu Perfil</h2>
+            <h2 className="text-xl font-bold text-blue-950">Meu Perfil</h2>
             
             {/* Header Card (Blue) */}
             {/* Reduced padding from p-8 to p-6 and avatar from w-24 to w-20 to make it "not too big" */}
@@ -1247,20 +1253,20 @@ const ProfileView = ({ user, onOpenSupport, onOpenTerms, onOpenFAQ }: { user: Te
 
             {/* Stats Info Grid */}
             <div className="grid grid-cols-2 gap-4">
-                 <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
+                 <div className="bg-white p-5 rounded-2xl shadow-sm border border-blue-100">
                     <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">ID USUÁRIO</p>
-                    <p className="font-bold text-slate-800 text-lg tracking-wide">{user?.id ? user.id : '---'}</p>
+                    <p className="font-bold text-blue-950 text-lg tracking-wide">{user?.id ? user.id : '---'}</p>
                  </div>
-                 <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
+                 <div className="bg-white p-5 rounded-2xl shadow-sm border border-blue-100">
                     <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">IDIOMA</p>
-                    <div className="flex items-center gap-2 font-bold text-slate-800 text-lg">
+                    <div className="flex items-center gap-2 font-bold text-blue-950 text-lg">
                         <Globe size={20} className="text-blue-600"/> PT-BR
                     </div>
                  </div>
             </div>
 
             {/* Menu List */}
-            <div className="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden divide-y divide-slate-50">
+            <div className="bg-white rounded-3xl shadow-sm border border-blue-100 overflow-hidden divide-y divide-blue-50">
                 {/* FAQ BUTTON (Highlighted as primary help) */}
                 <button onClick={onOpenFAQ} className="w-full p-4 flex items-center justify-between hover:bg-slate-50 transition-colors group">
                     <div className="flex items-center gap-4">
@@ -1450,7 +1456,7 @@ export const App: React.FC = () => {
   };
 
   const renderContent = () => {
-      if (showFAQ) return <FAQView onClose={() => setShowFAQ(false)} />;
+      if (showFAQ) return <FAQView onClose={() => setShowFAQ(false)} onSupport={handleSupportClick} />;
       if (showTerms) return <TermsView onClose={() => setShowTerms(false)} />;
 
       switch (activeTab) {
@@ -1472,11 +1478,12 @@ export const App: React.FC = () => {
   // Determine if header should be shown
   // Visible on: Home, MyNumbers, Orders (Services removed)
   // Hidden on: Profile, Balance, Support/Terms/FAQ Modals
+  // GLOBAL BACKGROUND CHANGED TO #eff6ff (blue-50)
   const showHeader = ['home', 'mynumbers', 'orders'].includes(activeTab) && !showTerms && !showFAQ;
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] font-sans text-slate-900 selection:bg-blue-100 pb-safe">
-      <div className="max-w-md mx-auto min-h-screen relative bg-slate-50/50 shadow-2xl">
+    <div className="min-h-screen bg-[#eff6ff] font-sans text-slate-900 selection:bg-blue-100 pb-safe">
+      <div className="max-w-md mx-auto min-h-screen relative bg-white/50 shadow-2xl">
         
         {/* GLOBAL HEADER */}
         {showHeader && (
@@ -1501,7 +1508,7 @@ export const App: React.FC = () => {
               {/* Telegram Message Lookalike */}
               <div className="relative z-10 flex items-end gap-2 animate-slideUp">
                   {/* Avatar - Replaced with requested image */}
-                  <div className="w-9 h-9 rounded-full bg-white flex items-center justify-center shrink-0 mb-1 shadow-sm overflow-hidden border border-slate-100">
+                  <div className="w-9 h-9 rounded-full bg-white flex items-center justify-center shrink-0 mb-1 shadow-sm overflow-hidden border border-blue-100">
                       <img src="https://iili.io/f56TNSI.md.jpg" alt="Logo" className="w-full h-full object-cover" />
                   </div>
                   
