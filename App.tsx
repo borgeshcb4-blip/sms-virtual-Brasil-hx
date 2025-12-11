@@ -229,7 +229,21 @@ const BRAZILIAN_NAMES = [
   "Pedro", "Lucas", "Mateus", "Gustavo", "Felipe", "João", "Rafael", "Daniel", "Enzo", "Bruno",
   "Helena", "Alice", "Laura", "Maria", "Sophia", "Manuela", "Maitê", "Liz", "Cecília", "Isabella",
   "Luísa", "Beatriz", "Mariana", "Ana", "Júlia", "Lara", "Fernanda", "Camila", "Amanda", "Letícia",
-  "Rodrigo", "Carlos", "Diego", "Eduardo", "Marcelo", "Ricardo", "Vanessa", "Patrícia", "Cristina"
+  "Rodrigo", "Carlos", "Diego", "Eduardo", "Marcelo", "Ricardo", "Vanessa", "Patrícia", "Cristina",
+  "André", "Antônio", "Augusto", "Bento", "Caio", "Cauã", "César", "Danilo", "Diogo", "Douglas",
+  "Elias", "Emanuel", "Fábio", "Fernando", "Francisco", "Guilherme", "Henrique", "Igor", "Isaac",
+  "Jorge", "José", "Júlio", "Leonardo", "Luan", "Lucca", "Luciano", "Luiz", "Marcos", "Mário",
+  "Maurício", "Murilo", "Nathan", "Nicolas", "Otávio", "Paulo", "Pietro", "Renan", "Renato",
+  "Roberto", "Ruan", "Samuel", "Sérgio", "Thiago", "Thomas", "Tiago", "Vítor", "Vinícius",
+  "Wagner", "William", "Yuri", "Ágata", "Alana", "Alícia", "Aline", "Ana Clara", "Ana Júlia",
+  "Ana Luíza", "Antonella", "Aurora", "Bárbara", "Bianca", "Bruna", "Carolina", "Catarina",
+  "Clara", "Clarice", "Débora", "Eduarda", "Elisa", "Eloá", "Emanuelly", "Esther", "Gabriela",
+  "Giovanna", "Heloísa", "Isabel", "Isabela", "Isadora", "Joana", "Juliana", "Kamilly", "Laís",
+  "Larissa", "Lavínia", "Lívia", "Lorena", "Luana", "Luna", "Maiara", "Marcela", "Maria Alice",
+  "Maria Cecília", "Maria Clara", "Maria Eduarda", "Maria Fernanda", "Maria Flor", "Maria Helena",
+  "Maria Júlia", "Maria Luíza", "Marina", "Melissa", "Milena", "Mirella", "Natália", "Nicole",
+  "Olívia", "Paloma", "Paola", "Pietra", "Rafaela", "Raquel", "Rebeca", "Sabrina", "Sarah",
+  "Sofia", "Sophie", "Stella", "Stephany", "Tatiane", "Thais", "Valentina", "Vitória", "Yasmin"
 ];
 
 const BRAZILIAN_STATES = [
@@ -499,8 +513,9 @@ const AppHeader: React.FC<AppHeaderProps> = ({
         }
     };
 
+    // Changed background to white for cleaner look as requested
     return (
-        <div className="sticky top-0 z-50 bg-[#f8fafc]/95 backdrop-blur-sm py-3 px-4 flex items-center gap-3 border-b border-transparent transition-colors duration-200">
+        <div className="sticky top-0 z-50 bg-white/95 backdrop-blur-md py-3 px-4 flex items-center gap-3 border-b border-transparent transition-colors duration-200">
              {/* 1. Home Button */}
              <button
                 className={`w-10 h-10 bg-white rounded-xl shadow-sm border border-slate-100 flex items-center justify-center active:scale-95 transition-transform shrink-0 ${activeTab === 'home' ? 'text-blue-600' : 'text-slate-700'}`}
@@ -602,26 +617,7 @@ const HomeView = ({ user, setTab, transactions, currentBalance, activeNumbersCou
          </div>
       </div>
 
-      {/* ALERT / CTA */}
-      {activeNumbersCount === 0 && (
-          <div className="bg-blue-50 border border-blue-100 rounded-2xl p-4 flex items-center justify-between gap-3 shadow-sm mx-1">
-                 <div className="flex items-center gap-3">
-                     <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 shrink-0">
-                         <Info size={20} />
-                     </div>
-                     <div className="flex-1">
-                         <p className="font-bold text-slate-800 text-xs">Você não comprou nenhum número</p>
-                         <p className="text-[10px] text-slate-500 leading-tight mt-0.5">Para receber o SMS, compre um serviço abaixo.</p>
-                     </div>
-                 </div>
-                 <button
-                    onClick={() => document.getElementById('service-selector')?.scrollIntoView({ behavior: 'smooth' })}
-                    className="bg-blue-600 text-white text-[10px] font-bold px-3 py-2 rounded-lg whitespace-nowrap shadow-md shadow-blue-200 active:scale-95 transition-transform"
-                 >
-                    Adquirir
-                 </button>
-          </div>
-      )}
+      {/* ALERT / CTA REMOVED */}
 
       {/* SERVICE SELECTOR SECTION */}
       <div id="service-selector" className="bg-white p-5 rounded-3xl shadow-sm border border-slate-100 space-y-5 mx-1">
@@ -695,16 +691,11 @@ const HomeView = ({ user, setTab, transactions, currentBalance, activeNumbersCou
                                     <button 
                                         onClick={(e) => {
                                             e.stopPropagation();
-                                            if(service.id === 'specific') {
-                                                // If "Outros Apps" is clicked, filter the list to 'other'
-                                                setSelectedCategory('other');
-                                            } else {
-                                                onPurchase(service);
-                                            }
+                                            onPurchase(service);
                                         }}
                                         className="relative overflow-hidden bg-blue-600 text-white text-[10px] font-bold px-3 py-1.5 rounded-lg shadow-sm shadow-blue-200 hover:bg-blue-700 transition-all active:scale-95 uppercase tracking-wide group-btn"
                                     >
-                                        <span className="relative z-10">{service.id === 'specific' ? 'Ver Todos' : 'Comprar'}</span>
+                                        <span className="relative z-10">Comprar</span>
                                         {/* Shimmer Overlay */}
                                         <div className="absolute inset-0 -translate-x-full animate-shimmer bg-gradient-to-r from-transparent via-white/30 to-transparent z-0" />
                                     </button>
@@ -929,7 +920,8 @@ const BalanceView = ({ onDeposit, currentBalance }: { onDeposit: (amount: number
                                 >
                                     <div className="flex items-baseline">
                                         <span className={`text-xs font-bold mr-0.5 ${amount === opt ? 'text-blue-100' : 'text-slate-400'}`}>R$</span>
-                                        <span className="text-xl font-extrabold tracking-tight"></span>
+                                        {/* FIXED: Added {opt} to display the value */}
+                                        <span className="text-xl font-extrabold tracking-tight">{opt}</span>
                                         <span className={`text-xs font-bold ${amount === opt ? 'text-blue-100' : 'text-slate-400'}`}>,00</span>
                                     </div>
                                     {amount === opt && (
@@ -1059,7 +1051,7 @@ const FAQView = ({ onClose }: { onClose: () => void }) => {
         {
             id: 4,
             question: "É seguro? E o meu dinheiro?",
-            answer: "Sua segurança é nossa prioridade. O sistema funciona com Garantia de Entrega: O valor do serviço só é descontado do seu saldo se o SMS realmente chegar. Se o código não chegar dentro do tempo limite (geralmente 20 minutos), o sistema cancela a operação e o dinheiro retorna automaticamente para o seu saldo no app. Você nunca perde dinheiro por um serviço que não funcionou.",
+            answer: "Sua segurança é nossa prioridade. O sistema funciona com Garantia de Entrega: O valor do serviço só é descontado do seu saldo se o código SMS for recebido com sucesso. Se o código não chegar dentro do tempo limite (geralmente 20 minutos), o sistema cancela a operação e o dinheiro retorna automaticamente para o seu saldo no app. Você nunca perde dinheiro por um serviço que não funcionou.",
             icon: ShieldCheck
         }
     ];
@@ -1144,88 +1136,89 @@ const FAQView = ({ onClose }: { onClose: () => void }) => {
 
 const TermsView = ({ onClose }: { onClose: () => void }) => {
     return (
-        <div className="fixed inset-0 bg-[#f8fafc] z-[60] flex flex-col h-[100vh]">
-            <div className="bg-white border-b border-slate-100 p-4 flex items-center gap-3 shadow-sm shrink-0">
-                <button onClick={onClose} className="p-2 -ml-2 hover:bg-slate-50 rounded-full transition-colors text-slate-600">
+        <div className="fixed inset-0 bg-white z-[60] flex flex-col h-[100vh]">
+            <div className="bg-white border-b border-gray-200 p-4 flex items-center gap-3 shrink-0">
+                <button onClick={onClose} className="p-2 -ml-2 hover:bg-slate-50 rounded-full transition-colors text-black">
                     <ChevronLeft size={24} />
                 </button>
                 <div className="flex items-center gap-2">
-                     <div className="w-8 h-8 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center">
-                        <FileText size={18} />
-                     </div>
-                     <h2 className="font-bold text-slate-800 text-lg">Termos de Uso</h2>
+                     <h2 className="font-bold text-black text-lg">Termos de Uso</h2>
                 </div>
             </div>
             
-            <div className="flex-1 overflow-y-auto p-5 space-y-6 text-sm text-slate-600 pb-12">
+            <div className="flex-1 overflow-y-auto p-6 space-y-6 text-xs text-black leading-relaxed font-sans pb-12">
                 
-                {/* 1. Header & Verification */}
-                <div className="text-center space-y-2 mb-4">
-                    <h3 className="font-extrabold text-slate-800 text-xl">𝗦𝗠𝗦 𝗩𝗜𝗥𝗧𝗨𝗔𝗟 𝗕𝗥</h3>
-                    <div className="inline-flex items-center gap-1.5 bg-green-50 text-green-700 px-3 py-1 rounded-full text-xs font-bold border border-green-100">
-                        <ShieldCheck size={12} strokeWidth={3} />
-                        Plataforma Segura e Verificada
-                    </div>
-                </div>
+                <h1 className="text-lg font-bold uppercase mb-4 text-black">Termos e Condições Gerais de Uso</h1>
+                
+                <p>
+                    Estes Termos e Condições Gerais aplicam-se ao uso dos serviços oferecidos pela SMS VIRTUAL BR, compreendendo o fornecimento de números virtuais temporários para recebimento de SMS.
+                </p>
 
-                {/* 2. Regra de Ouro (CRITICAL) */}
-                 <section className="bg-amber-50 p-5 rounded-2xl border border-amber-100 relative overflow-hidden">
-                    <div className="absolute -right-6 -top-6 bg-amber-100 w-24 h-24 rounded-full opacity-50"></div>
-                    
-                    <h3 className="text-amber-800 font-bold text-base mb-3 flex items-center gap-2 relative z-10">
-                        <AlertCircle size={20}/> Regra de Ouro
-                    </h3>
-                    
-                    <div className="space-y-3 relative z-10">
-                        <p className="leading-relaxed text-amber-900 text-xs font-bold">
-                            ⚠️ IMPORTANTE: Nossos números são TEMPORÁRIOS e DESCARTÁVEIS.
-                        </p>
-                        <p className="leading-relaxed text-amber-800/90 text-xs">
-                           Isso significa que você usa o número para ativar a conta (receber o código) e depois ele é desativado.
-                        </p>
-                        <p className="leading-relaxed text-amber-800/90 text-xs font-medium bg-white/50 p-2 rounded-lg border border-amber-200/50">
-                           🚫 <strong>NÃO USE</strong> para serviços que exigem recuperação constante (como bancos, gov-br ou senhas importantes). Se você perder a senha da conta criada, não será possível receber outro SMS no mesmo número no futuro.
-                        </p>
-                    </div>
-                </section>
+                <p>
+                    Ao utilizar nossos serviços, você aceita estes termos em sua totalidade. Se você não concordar com qualquer parte destes termos, não deve utilizar nossos serviços.
+                </p>
 
-                {/* 3. Privacidade */}
-                <section className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
-                    <h3 className="text-slate-900 font-bold text-base mb-3 flex items-center gap-2">
-                        <Lock size={20} className="text-blue-600"/> Privacidade e Anonimato
-                    </h3>
-                    <p className="text-xs leading-relaxed text-slate-500 mb-2">
-                        Ao usar nossos números, você protege seu número pessoal real contra spams, listas de marketing e vazamento de dados. 
-                    </p>
-                    <p className="text-xs leading-relaxed text-slate-500">
-                        Não exigimos seus documentos pessoais para gerar um número virtual, garantindo total privacidade na criação das suas contas secundárias.
+                <section>
+                    <h3 className="font-bold uppercase mb-2 text-sm">1. Descrição do Serviço</h3>
+                    <p>
+                        A SMS VIRTUAL BR fornece números de telefone temporários e descartáveis para fins de verificação de contas em serviços de terceiros (como WhatsApp, Telegram, Facebook, etc). Os números são alugados por um curto período de tempo (geralmente 20 minutos) exclusivamente para receber códigos de ativação via SMS.
                     </p>
                 </section>
 
-                {/* 4. Segurança e Reembolso */}
-                <section className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
-                    <h3 className="text-slate-900 font-bold text-base mb-3 flex items-center gap-2">
-                        <ShieldCheck size={20} className="text-green-600"/> É Seguro?
-                    </h3>
-                    <p className="text-xs leading-relaxed text-slate-500 mb-2">
-                        Sua segurança é nossa prioridade. O sistema funciona com Garantia de Entrega:
+                <section>
+                    <h3 className="font-bold uppercase mb-2 text-sm">2. Natureza Temporária dos Números</h3>
+                    <p>
+                        O usuário reconhece e concorda que:
+                        <br/>a) Os números fornecidos são temporários e não pertencem ao usuário.
+                        <br/>b) Após o período de ativação, o número é descartado e pode ser reutilizado ou desativado pelas operadoras.
+                        <br/>c) Não é possível recuperar o mesmo número após o término do período de locação.
+                        <br/>d) O serviço não deve ser utilizado para contas bancárias, autenticação de dois fatores (2FA) de longo prazo ou qualquer serviço que exija acesso contínuo ao número de telefone.
                     </p>
-                    <ul className="space-y-2 mt-2">
-                        <li className="flex gap-2 text-xs text-slate-500 bg-slate-50 p-2 rounded-lg">
-                            <span className="text-green-500 font-bold">✓</span>
-                            O valor do serviço só é descontado do seu saldo se o SMS realmente chegar.
-                        </li>
-                        <li className="flex gap-2 text-xs text-slate-500 bg-slate-50 p-2 rounded-lg">
-                            <span className="text-green-500 font-bold">✓</span>
-                            Se o código não chegar dentro do tempo limite (20 min), o sistema cancela a operação e o dinheiro retorna automaticamente para o seu saldo.
-                        </li>
-                    </ul>
                 </section>
 
-                <div className="pt-4 pb-4 text-center">
-                    <p className="text-[10px] text-slate-400 font-medium">
-                        Atualizado em Março de 2025<br/>
-                        © 2025 𝗦𝗠𝗦 𝗩𝗜𝗥𝗧𝗨𝗔𝗟 𝗕𝗥. Todos os direitos reservados.
+                <section>
+                    <h3 className="font-bold uppercase mb-2 text-sm">3. Pagamentos e Reembolsos</h3>
+                    <p>
+                        O sistema opera em regime pré-pago. O saldo deve ser adicionado previamente para utilização dos serviços.
+                    </p>
+                    <p className="mt-2">
+                        <strong>Garantia de Entrega:</strong> O valor do serviço só será debitado do saldo do usuário se o código SMS for recebido com sucesso. Caso o código não chegue dentro do tempo estipulado, o valor retorna integralmente ao saldo do usuário na plataforma.
+                    </p>
+                    <p className="mt-2">
+                        Não realizamos estornos de saldo para contas bancárias, exceto em casos de falha técnica comprovada da plataforma que impeça a utilização do saldo. O saldo adquirido deve ser utilizado dentro da plataforma.
+                    </p>
+                </section>
+
+                <section>
+                    <h3 className="font-bold uppercase mb-2 text-sm">4. Responsabilidades do Usuário</h3>
+                    <p>
+                        É estritamente proibido utilizar nossos serviços para:
+                        <br/>- Atividades ilegais ou fraudulentas.
+                        <br/>- Disseminação de spam ou assédio.
+                        <br/>- Criação de contas falsas para prejudicar terceiros.
+                    </p>
+                    <p className="mt-2">
+                        A SMS VIRTUAL BR não se responsabiliza pelo uso indevido dos números fornecidos. O usuário é o único responsável por suas ações ao utilizar os números temporários.
+                    </p>
+                </section>
+
+                <section>
+                    <h3 className="font-bold uppercase mb-2 text-sm">5. Limitação de Responsabilidade</h3>
+                    <p>
+                        Não nos responsabilizamos por perdas de contas, bloqueios ou banimentos em plataformas de terceiros (como WhatsApp ou Telegram). O uso de números virtuais pode violar os termos de serviço de alguns aplicativos, e o usuário assume esse risco.
+                    </p>
+                </section>
+
+                 <section>
+                    <h3 className="font-bold uppercase mb-2 text-sm">6. Privacidade</h3>
+                    <p>
+                        Não coletamos dados pessoais identificáveis para o fornecimento de números. O serviço preza pelo anonimato e privacidade do usuário na ativação de contas.
+                    </p>
+                </section>
+
+                <div className="pt-8 pb-4 text-center border-t border-gray-100 mt-8">
+                    <p className="text-[10px] text-black font-bold">
+                        SMS VIRTUAL BR © 2025
                     </p>
                 </div>
             </div>
@@ -1507,9 +1500,9 @@ export const App: React.FC = () => {
               
               {/* Telegram Message Lookalike */}
               <div className="relative z-10 flex items-end gap-2 animate-slideUp">
-                  {/* Avatar */}
-                  <div className="w-9 h-9 rounded-full bg-blue-500 flex items-center justify-center text-white shrink-0 mb-1 shadow-sm">
-                      <Smartphone size={18} strokeWidth={2.5} />
+                  {/* Avatar - Replaced with requested image */}
+                  <div className="w-9 h-9 rounded-full bg-white flex items-center justify-center shrink-0 mb-1 shadow-sm overflow-hidden border border-slate-100">
+                      <img src="https://iili.io/f56TNSI.md.jpg" alt="Logo" className="w-full h-full object-cover" />
                   </div>
                   
                   {/* Bubble */}
