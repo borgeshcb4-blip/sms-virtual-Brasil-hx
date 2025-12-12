@@ -10,6 +10,18 @@ export interface TelegramUser {
     photo_url?: string;
 }
 
+export interface LocationData {
+    latitude: number;
+    longitude: number;
+    altitude: number | null;
+    course: number | null;
+    speed: number | null;
+    horizontal_accuracy: number | null;
+    vertical_accuracy: number | null;
+    course_accuracy: number | null;
+    speed_accuracy: number | null;
+}
+
 export interface TelegramWebApp {
     initData: string;
     initDataUnsafe: {
@@ -65,6 +77,12 @@ export interface TelegramWebApp {
         notificationOccurred: (type: 'error' | 'success' | 'warning') => void;
         impactOccurred: (style: 'light' | 'medium' | 'heavy' | 'rigid' | 'soft') => void;
         selectionChanged: () => void;
+    };
+    LocationManager: {
+        init: (callback?: () => void) => void;
+        getLocation: (callback: (data: LocationData | null) => void) => void;
+        isLocationAvailable: boolean;
+        isInited: boolean;
     };
     setHeaderColor?: (color: string) => void;
 }
