@@ -366,26 +366,8 @@ const SocialProofWidget = () => {
         state: string, 
         service: ExtendedService,
         timeLabel: string,
-        isLive: boolean,
-        isLocal?: boolean // NEW: Flag for location-based proofs
+        isLive: boolean
     } | null>(null);
-
-    // State to track if user gave location permission
-    const [hasLocationAccess, setHasLocationAccess] = useState(false);
-
-    // Initial Location Request
-    useEffect(() => {
-        const tg = window.Telegram?.WebApp;
-        if (tg?.LocationManager) {
-            tg.LocationManager.init(() => {
-                tg.LocationManager.getLocation((data) => {
-                    if (data) {
-                        setHasLocationAccess(true);
-                    }
-                });
-            });
-        }
-    }, []);
 
     // IDs de serviços populares para prova social (Atualizado: WhatsApp, Google, OpenAI, Discord, Outros)
     // 1: WhatsApp, 3: Google/YouTube/Gmail, 34: OpenAI, 31: Discord, specific: Outros
@@ -407,14 +389,7 @@ const SocialProofWidget = () => {
             timeoutId = setTimeout(() => {
                 // Generate random data
                 const randomName = BRAZILIAN_NAMES[Math.floor(Math.random() * BRAZILIAN_NAMES.length)];
-                
-                // Logic for "Near You" (Fake Location Trust)
-                // If we have location access, 40% chance to show a "Local" notification
-                const useLocalProof = hasLocationAccess && Math.random() > 0.6;
-                
-                const randomState = useLocalProof 
-                    ? "Sua Região" 
-                    : BRAZILIAN_STATES[Math.floor(Math.random() * BRAZILIAN_STATES.length)];
+                const randomState = BRAZILIAN_STATES[Math.floor(Math.random() * BRAZILIAN_STATES.length)];
                 
                 // Select only from popular services
                 const randomService = popularServices[Math.floor(Math.random() * popularServices.length)];
@@ -427,8 +402,7 @@ const SocialProofWidget = () => {
                     state: randomState, 
                     service: randomService,
                     timeLabel: timeObj.label,
-                    isLive: timeObj.isLive,
-                    isLocal: useLocalProof
+                    isLive: timeObj.isLive
                 });
                 setVisible(true);
 
@@ -448,23 +422,17 @@ const SocialProofWidget = () => {
             clearTimeout(timeoutId);
             clearTimeout(hideTimeoutId);
         };
-    }, [popularServices, hasLocationAccess]);
+    }, [popularServices]);
 
     if (!data) return null;
 
     return (
         <div className={`fixed bottom-24 left-0 right-0 z-40 flex justify-center pointer-events-none transition-all duration-700 transform ${visible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
-            <div className={`bg-white/95 backdrop-blur-md px-3.5 py-2.5 rounded-full shadow-xl flex items-center gap-3 max-w-[95%] mx-4 ${data.isLocal ? 'border-2 border-blue-300 ring-2 ring-blue-100' : 'border border-blue-100'}`}>
+            <div className="bg-white/95 backdrop-blur-md px-3.5 py-2.5 rounded-full shadow-xl border border-blue-100 flex items-center gap-3 max-w-[95%] mx-4">
                  <ServiceIcon service={data.service} size="w-7 h-7" />
                  <div className="flex flex-col">
                      <p className="text-[11px] text-blue-900 leading-tight">
-                        <span className="font-bold">{data.name}</span> 
-                        {data.isLocal ? (
-                             <span className="font-extrabold text-blue-600 bg-blue-50 px-1 rounded ml-1">📍 Próximo a você</span>
-                        ) : (
-                             <span className="text-slate-500"> ({data.state})</span>
-                        )} 
-                        <span className="ml-1">ativou</span> <span className="font-bold text-blue-600">{data.service.name}</span>
+                        <span className="font-bold">{data.name}</span> ({data.state}) ativou <span className="font-bold text-blue-600">{data.service.name}</span>
                      </p>
                  </div>
                  <div className="flex items-center gap-1 pl-2 border-l border-blue-200 ml-1">
