@@ -874,10 +874,21 @@ const BalanceView = ({ onDeposit, currentBalance }: { onDeposit: (amount: number
     };
 
     const handleConfirmPayment = () => {
+        // Adiciona vibração ao clicar (Feedback tátil)
+        if (window.Telegram?.WebApp?.HapticFeedback) {
+             window.Telegram.WebApp.HapticFeedback.impactOccurred('medium');
+        }
+
         setLoading(true);
         
         setTimeout(() => {
             setLoading(false);
+            
+            // Adiciona vibração de erro ao mostrar o alerta
+            if (window.Telegram?.WebApp?.HapticFeedback) {
+                 window.Telegram.WebApp.HapticFeedback.notificationOccurred('error');
+            }
+
             // Lógica alterada: Sempre nega o pagamento e não adiciona saldo
             alert("Pagamento não identificado");
         }, 2000);
